@@ -1,0 +1,9 @@
+﻿side,cost_scenario,trades,signal_correct,pnl_per_trade_krw,pnl_total_krw,win_rate
+long_only,mid_no_cost,4086,0.8796,3155,12893000,0.5906
+long_only,spread_only,4086,0.8796,-5039,-20588000,0.0636
+long_only,passive_upper_bound,4086,0.8796,-10845,-44313174,0.024
+long_only,realistic,4086,0.8796,-26409,-107908670,0.0
+long_short,mid_no_cost,9674,0.8702,3027,29280500,0.5756
+long_short,spread_only,9674,0.8702,-5297,-51241000,0.0633
+long_short,passive_upper_bound,9674,0.8702,-10840,-104866072,0.0275
+long_short,realistic,9674,0.8702,-26692,-258215249,0.0

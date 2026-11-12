@@ -58,7 +58,7 @@
 - 모델이 확신할 때만 답하면 다음 가격 변화 방향을 상위 약 4%에서 0.87 적중했습니다.
 - 수수료·세금·스프레드를 넣은 백테스트는 모든 전략이 손실이었습니다.
 
-전체 결과와 부록 실험은 [`RESULTS.md`](RESULTS.md)에 정리했습니다.
+전체 결과와 부록 실험은 [`RESULTS.md`](RESULTS.md)에, 발표 자료·결과 표·그래프 목록은 [`report/`](report/README.md)에 정리했습니다.
 
 <p align="center">
   <img src="figures/18_vol_confusion.png" width="420">
@@ -84,7 +84,9 @@ src/          피처 생성, 모델 학습·평가, 그림
   next_move*.py       다음 가격 변화 방향, 확신 기반 판정
   backtest.py, swing.py  비용을 넣은 백테스트
   plots.py ...        결과 파일에서 그림 생성
+  make_tables.py      결과 파일에서 요약 표(CSV) 생성
 results/      실험 결과 (JSON Lines)
+report/       발표 자료, 결과 표(CSV), 결과물 설명
 figures/      발표용 그림
 RESULTS.md    전체 결과 정리
 run_all.sh    전체 파이프라인 실행 순서

@@ -1,0 +1,14 @@
+﻿config,T,hidden,lr,dropout,class_weight,seed,val_macro_F1,val_accuracy,best_epoch
+base,50,64,0.001,0.2,balanced,0,0.506,0.5864,3
+base_seed1,50,64,0.001,0.2,balanced,1,0.5109,0.5841,5
+base_seed2,50,64,0.001,0.2,balanced,2,0.5066,0.5797,3
+T10,10,64,0.001,0.2,balanced,0,0.5037,0.5522,3
+T25,25,64,0.001,0.2,balanced,0,0.5061,0.5731,2
+T100,100,64,0.001,0.2,balanced,0,0.5036,0.5707,2
+hidden32,50,32,0.001,0.2,balanced,0,0.5061,0.5849,3
+hidden128,50,128,0.001,0.2,balanced,0,0.5077,0.5738,6
+lr3e-4,50,64,0.0003,0.2,balanced,0,0.5046,0.5677,3
+lr3e-3,50,64,0.003,0.2,balanced,0,0.5036,0.5654,2
+dropout0,50,64,0.001,0.0,balanced,0,0.5086,0.588,3
+dropout0.5,50,64,0.001,0.5,balanced,0,0.5054,0.586,3
+no_class_weight,50,64,0.001,0.2,none,0,0.4059,0.6408,1

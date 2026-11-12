@@ -1,0 +1,26 @@
+﻿horizon_s,model,val_macro_F1,val_accuracy
+1,majority,0.31,0.8692
+1,momentum(sign ret20),0.3239,0.5879
+1,logreg small (imb/OFI/micro),0.2276,0.2398
+1,logreg all,0.4887,0.7184
+1,gbm all,0.4851,0.6989
+2,majority,0.2922,0.7804
+2,momentum(sign ret20),0.3408,0.5548
+2,logreg small (imb/OFI/micro),0.277,0.2685
+2,logreg all,0.5075,0.6636
+2,gbm all,0.5025,0.6323
+5,majority,0.2564,0.6249
+5,momentum(sign ret20),0.3486,0.4884
+5,logreg small (imb/OFI/micro),0.3251,0.3198
+5,logreg all,0.5012,0.5809
+5,gbm all,0.5024,0.5548
+10,majority,0.2176,0.4845
+10,momentum(sign ret20),0.34,0.4234
+10,logreg small (imb/OFI/micro),0.3468,0.3675
+10,logreg all,0.4718,0.5096
+10,gbm all,0.4775,0.4932
+30,majority,0.1803,0.3706
+30,momentum(sign ret20),0.3002,0.3221
+30,logreg small (imb/OFI/micro),0.3662,0.4225
+30,logreg all,0.4015,0.4057
+30,gbm all,0.4124,0.4143

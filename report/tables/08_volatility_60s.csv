@@ -1,0 +1,6 @@
+﻿model,val_macro_F1,test_macro_F1,test_accuracy
+previous 60 s class,0.5774,0.6006,0.5957
+time of day only,0.4395,0.4306,0.4528
+logistic regression,0.6259,0.6494,0.6416
+GBM,0.6186,0.6545,0.6487
+conv+GRU,0.626,0.6539,0.6479

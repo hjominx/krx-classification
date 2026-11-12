@@ -1,0 +1,12 @@
+﻿model,test_macro_F1,test_accuracy
+always flat (majority),0.2498,0.5992
+momentum rule,0.3612,0.4781
+logistic regression,0.4985,0.544
+GBM (book features),0.4961,0.5228
+GBM (book + trade features),0.4945,0.5197
+DeepLOB,0.4782,0.5046
+conv+GRU (first run),0.4988,0.5393
+"conv+GRU (tuned, base_seed1)",0.5067,0.5511
+conv+GRU (tuned) + flat calibration m=1.25,0.5093,0.5825
+"conv+GRU (full-data training, full_h128) m=1",0.4853,0.5101
+"conv+GRU (full-data training, full_h128) m=1.5",0.5024,0.5745

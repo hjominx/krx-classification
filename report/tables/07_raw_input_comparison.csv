@@ -1,0 +1,5 @@
+﻿model (raw 40 book inputs),val_macro_F1,test_macro_F1,test_accuracy,GRU_minus_model_mean,GRU_minus_model_ci95_low,GRU_minus_model_ci95_high
+logistic regression,0.4828,0.4774,0.5182,0.0035,-0.0022,0.0093
+GBM (current snapshot),0.4744,0.462,0.4761,0.0185,0.0137,0.0239
+GBM (7 lags),0.4836,0.4733,0.4899,0.0072,0.0035,0.0102
+conv+GRU (50 snapshots),0.4972,0.4808,0.5064,,,

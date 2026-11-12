@@ -1,0 +1,16 @@
+﻿stage,item,n_features,val_macro_F1,contribution_or_note
+A: add trades,base71,71,0.5046,
+A: add trades,base+trade95,95,0.5085,
+B: drop one group,book,48,0.476,0.0325
+B: drop one group,price,89,0.508,0.0005
+B: drop one group,flow,80,0.5044,0.0041
+B: drop one group,time,92,0.5065,0.002
+B: drop one group,trade_tw,83,0.5064,0.0021
+B: drop one group,trade_ev,92,0.5081,0.0004
+B: drop one group,trade_last,90,0.5086,-0.0001
+B: drop one group,trade_cum,91,0.5086,-0.0001
+B: kept set,kept,77,0.5081,
+C: GBM settings,lr.05_l15_m20,,0.5092,best_iter=100
+C: GBM settings,lr.05_l31_m200,,0.509,best_iter=100
+C: GBM settings,lr.05_l63_m500,,0.5085,best_iter=100
+C: GBM settings,lr.1_l31_m200,,0.508,best_iter=100

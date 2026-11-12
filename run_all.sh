@@ -56,6 +56,7 @@ python raw_cmp.py
 python plots.py
 python plot_vol.py
 python plot_full.py
+python make_tables.py
 
 # optional, needs data/hl_npz (Hyperliquid book data)
 # python cross_venue.py
