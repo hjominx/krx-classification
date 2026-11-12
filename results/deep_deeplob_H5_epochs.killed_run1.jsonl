@@ -1,0 +1,1 @@
+{"model": "deeplob", "H": 5, "epoch": 0, "train_loss": 0.9679, "val_mF1": 0.4672, "val_acc": 0.4971, "sec": 445}

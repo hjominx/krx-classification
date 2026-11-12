@@ -1,0 +1,5 @@
+{"model": "deeplob", "H": 5, "epoch": 0, "train_loss": 0.9679, "val_mF1": 0.4672, "val_acc": 0.4971, "sec": 428}
+{"model": "deeplob", "H": 5, "epoch": 1, "train_loss": 0.9446, "val_mF1": 0.4673, "val_acc": 0.4911, "sec": 858}
+{"model": "deeplob", "H": 5, "epoch": 2, "train_loss": 0.9433, "val_mF1": 0.4895, "val_acc": 0.5365, "sec": 1283}
+{"model": "deeplob", "H": 5, "epoch": 3, "train_loss": 0.9361, "val_mF1": 0.4736, "val_acc": 0.5029, "sec": 1733}
+{"model": "deeplob", "H": 5, "epoch": 4, "train_loss": 0.9363, "val_mF1": 0.4743, "val_acc": 0.5072, "sec": 2150}

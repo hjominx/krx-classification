@@ -1,0 +1,6 @@
+{"model": "gru", "H": 5, "epoch": 0, "train_loss": 0.9371, "val_mF1": 0.5006, "val_acc": 0.5799, "sec": 37}
+{"model": "gru", "H": 5, "epoch": 1, "train_loss": 0.9245, "val_mF1": 0.5025, "val_acc": 0.5564, "sec": 73}
+{"model": "gru", "H": 5, "epoch": 2, "train_loss": 0.9209, "val_mF1": 0.5036, "val_acc": 0.561, "sec": 108}
+{"model": "gru", "H": 5, "epoch": 3, "train_loss": 0.9176, "val_mF1": 0.506, "val_acc": 0.5859, "sec": 143}
+{"model": "gru", "H": 5, "epoch": 4, "train_loss": 0.9162, "val_mF1": 0.5049, "val_acc": 0.563, "sec": 178}
+{"model": "gru", "H": 5, "epoch": 5, "train_loss": 0.9155, "val_mF1": 0.5054, "val_acc": 0.5597, "sec": 213}

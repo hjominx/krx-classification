@@ -1,0 +1,37 @@
+{"exp": "horizon", "H": 1, "model": "majority", "mF1": 0.31, "acc": 0.8692, "mF1_day_mean": 0.3103, "mF1_day_sd": 0.0051, "val_dist": [0.066, 0.869, 0.065]}
+{"exp": "horizon", "H": 1, "model": "momentum(sign ret20)", "mF1": 0.3239, "acc": 0.5879, "mF1_day_mean": 0.3218, "mF1_day_sd": 0.0082}
+{"exp": "horizon", "H": 1, "model": "logreg small (imb/OFI/micro)", "mF1": 0.2276, "acc": 0.2398, "mF1_day_mean": 0.2261, "mF1_day_sd": 0.0292, "sec": 3}
+{"exp": "horizon", "H": 1, "model": "logreg all", "mF1": 0.4887, "acc": 0.7184, "mF1_day_mean": 0.4866, "mF1_day_sd": 0.0199, "sec": 15}
+{"exp": "horizon", "H": 1, "model": "gbm all", "mF1": 0.4851, "acc": 0.6989, "mF1_day_mean": 0.4823, "mF1_day_sd": 0.0194, "iters": 400, "sec": 251}
+{"exp": "horizon", "H": 2, "model": "majority", "mF1": 0.2922, "acc": 0.7804, "mF1_day_mean": 0.2926, "mF1_day_sd": 0.0086, "val_dist": [0.111, 0.78, 0.108]}
+{"exp": "horizon", "H": 2, "model": "momentum(sign ret20)", "mF1": 0.3408, "acc": 0.5548, "mF1_day_mean": 0.3377, "mF1_day_sd": 0.0087}
+{"exp": "horizon", "H": 2, "model": "logreg small (imb/OFI/micro)", "mF1": 0.277, "acc": 0.2685, "mF1_day_mean": 0.2748, "mF1_day_sd": 0.0342, "sec": 4}
+{"exp": "horizon", "H": 2, "model": "logreg all", "mF1": 0.5075, "acc": 0.6636, "mF1_day_mean": 0.5037, "mF1_day_sd": 0.0155, "sec": 12}
+{"exp": "horizon", "H": 2, "model": "gbm all", "mF1": 0.5025, "acc": 0.6323, "mF1_day_mean": 0.4992, "mF1_day_sd": 0.0142, "iters": 400, "sec": 246}
+{"exp": "horizon", "H": 5, "model": "majority", "mF1": 0.2564, "acc": 0.6249, "mF1_day_mean": 0.2569, "mF1_day_sd": 0.0142, "val_dist": [0.19, 0.625, 0.185]}
+{"exp": "horizon", "H": 5, "model": "momentum(sign ret20)", "mF1": 0.3486, "acc": 0.4884, "mF1_day_mean": 0.3444, "mF1_day_sd": 0.0089}
+{"exp": "horizon", "H": 5, "model": "logreg small (imb/OFI/micro)", "mF1": 0.3251, "acc": 0.3198, "mF1_day_mean": 0.3225, "mF1_day_sd": 0.0333, "sec": 4}
+{"exp": "horizon", "H": 5, "model": "logreg all", "mF1": 0.5012, "acc": 0.5809, "mF1_day_mean": 0.4961, "mF1_day_sd": 0.0107, "sec": 12}
+{"exp": "horizon", "H": 5, "model": "gbm all", "mF1": 0.5024, "acc": 0.5548, "mF1_day_mean": 0.4993, "mF1_day_sd": 0.01, "iters": 400, "sec": 232}
+{"exp": "horizon", "H": 10, "model": "majority", "mF1": 0.2176, "acc": 0.4845, "mF1_day_mean": 0.2181, "mF1_day_sd": 0.0188, "val_dist": [0.263, 0.484, 0.252]}
+{"exp": "horizon", "H": 10, "model": "momentum(sign ret20)", "mF1": 0.34, "acc": 0.4234, "mF1_day_mean": 0.3354, "mF1_day_sd": 0.0085}
+{"exp": "horizon", "H": 10, "model": "logreg small (imb/OFI/micro)", "mF1": 0.3468, "acc": 0.3675, "mF1_day_mean": 0.3441, "mF1_day_sd": 0.0319, "sec": 5}
+{"exp": "horizon", "H": 10, "model": "logreg all", "mF1": 0.4718, "acc": 0.5096, "mF1_day_mean": 0.4648, "mF1_day_sd": 0.0091, "sec": 12}
+{"exp": "horizon", "H": 10, "model": "gbm all", "mF1": 0.4775, "acc": 0.4932, "mF1_day_mean": 0.4736, "mF1_day_sd": 0.0129, "iters": 400, "sec": 238}
+{"exp": "horizon", "H": 30, "model": "majority", "mF1": 0.1803, "acc": 0.3706, "mF1_day_mean": 0.1794, "mF1_day_sd": 0.0104, "val_dist": [0.371, 0.284, 0.345]}
+{"exp": "horizon", "H": 30, "model": "momentum(sign ret20)", "mF1": 0.3002, "acc": 0.3221, "mF1_day_mean": 0.2957, "mF1_day_sd": 0.0082}
+{"exp": "horizon", "H": 30, "model": "logreg small (imb/OFI/micro)", "mF1": 0.3662, "acc": 0.4225, "mF1_day_mean": 0.3616, "mF1_day_sd": 0.0261, "sec": 5}
+{"exp": "horizon", "H": 30, "model": "logreg all", "mF1": 0.4015, "acc": 0.4057, "mF1_day_mean": 0.3907, "mF1_day_sd": 0.0125, "sec": 12}
+{"exp": "horizon", "H": 30, "model": "gbm all", "mF1": 0.4124, "acc": 0.4143, "mF1_day_mean": 0.4061, "mF1_day_sd": 0.0166, "iters": 400, "sec": 231}
+{"exp": "ablation", "H": 5, "features": "book", "n_features": 47, "mF1": 0.4641, "acc": 0.4923, "mF1_day_mean": 0.4586, "mF1_day_sd": 0.0196}
+{"exp": "ablation", "H": 5, "features": "book+price", "n_features": 53, "mF1": 0.4805, "acc": 0.5179, "mF1_day_mean": 0.4761, "mF1_day_sd": 0.0151}
+{"exp": "ablation", "H": 5, "features": "book+price+flow", "n_features": 68, "mF1": 0.4991, "acc": 0.5479, "mF1_day_mean": 0.4951, "mF1_day_sd": 0.0109}
+{"exp": "ablation", "H": 5, "features": "all (+time)", "n_features": 71, "mF1": 0.5024, "acc": 0.5548, "mF1_day_mean": 0.4993, "mF1_day_sd": 0.01}
+{"exp": "gbm_grid", "H": 5, "learning_rate": 0.05, "max_leaf_nodes": 15, "l2": 0.0, "mF1": 0.5068, "acc": 0.5599, "mF1_day_mean": 0.5034, "mF1_day_sd": 0.0113, "iters": 400, "sec": 254}
+{"exp": "gbm_grid", "H": 5, "learning_rate": 0.05, "max_leaf_nodes": 15, "l2": 1.0, "mF1": 0.5069, "acc": 0.5603, "mF1_day_mean": 0.5035, "mF1_day_sd": 0.0119, "iters": 400, "sec": 256}
+{"exp": "gbm_grid", "H": 5, "learning_rate": 0.05, "max_leaf_nodes": 63, "l2": 0.0, "mF1": 0.5054, "acc": 0.5584, "mF1_day_mean": 0.5023, "mF1_day_sd": 0.0108, "iters": 400, "sec": 319}
+{"exp": "gbm_grid", "H": 5, "learning_rate": 0.05, "max_leaf_nodes": 63, "l2": 1.0, "mF1": 0.5049, "acc": 0.5576, "mF1_day_mean": 0.5015, "mF1_day_sd": 0.0101, "iters": 400, "sec": 324}
+{"exp": "gbm_grid", "H": 5, "learning_rate": 0.1, "max_leaf_nodes": 15, "l2": 0.0, "mF1": 0.5051, "acc": 0.5588, "mF1_day_mean": 0.5019, "mF1_day_sd": 0.0101, "iters": 400, "sec": 231}
+{"exp": "gbm_grid", "H": 5, "learning_rate": 0.1, "max_leaf_nodes": 15, "l2": 1.0, "mF1": 0.5046, "acc": 0.557, "mF1_day_mean": 0.5014, "mF1_day_sd": 0.0114, "iters": 400, "sec": 237}
+{"exp": "gbm_grid", "H": 5, "learning_rate": 0.1, "max_leaf_nodes": 63, "l2": 0.0, "mF1": 0.4999, "acc": 0.5529, "mF1_day_mean": 0.497, "mF1_day_sd": 0.0098, "iters": 400, "sec": 278}
+{"exp": "gbm_grid", "H": 5, "learning_rate": 0.1, "max_leaf_nodes": 63, "l2": 1.0, "mF1": 0.4995, "acc": 0.5532, "mF1_day_mean": 0.4965, "mF1_day_sd": 0.009, "iters": 400, "sec": 294}

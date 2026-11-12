@@ -1,0 +1,9 @@
+# raw and processed market data are not distributed
+data/*
+!data/README.md
+# large model outputs
+results/*.npz
+results/*.pt
+*.log
+__pycache__/
+.ipynb_checkpoints/

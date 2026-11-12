@@ -1,0 +1,5 @@
+{"variant": "norm_no_tick", "val_mF1": 0.4934, "val_acc": 0.5303}
+{"variant": "log_shift_only", "val_mF1": 0.4922, "val_acc": 0.528}
+{"variant": "ofi_rescale_only", "val_mF1": 0.5071, "val_acc": 0.561}
+{"variant": "raw_plus_tick", "val_mF1": 0.493, "val_acc": 0.5258}
+{"variant": "label_mix", "TRAIN": [0.216, 0.577, 0.207], "last20_before_val": [0.148, 0.704, 0.148], "VAL": [0.19, 0.625, 0.185]}
