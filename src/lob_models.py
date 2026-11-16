@@ -22,9 +22,11 @@ Configs (stage S, seed 0; inputs standardised with TRAIN statistics, clipped to 
   mlplob_full50 / tlob_full50 : the 127 v2 columns, 50 snapshots              ref: conv+GRU 'base' seeds 0-4
   tlob_full128                : 127 columns, 128 snapshots (the paper's TLOB length)
   mlplob_full128              : 127 columns, 128 snapshots (the paper's 384 is not affordable on this CPU; ours)
-Stage M: the config with the best VAL macro-F1 among the four 'full' ones gets seeds 1-4 (5-seed bag, as for conv+GRU).
-Stage test: that bag on TEST once, on the rows of the earlier tuned conv+GRU, with a day-block bootstrap against it.
-usage: python lob_models.py S | M | test | smoke   -> results/lob_models.jsonl
+Stage M: the config with the best VAL macro-F1 among the four 'full' ones gets seeds 1-2 (3-seed bag; 5 seeds are not
+         affordable for the slow configs). Reference on VAL: the conv+GRU 'base' bag of seeds 0-2 (deep_v2.py), same rows.
+Stage test: that bag on TEST once. Reference on the same rows: the conv+GRU 'base' bag (seeds 0-2, VAL-selected
+         checkpoints of deep_v2.py); day-block bootstrap (2,000 resamples) of the macro-F1 difference.
+usage: python lob_models.py S | M | bagval | test | smoke   -> results/lob_models.jsonl
 """
 import json, math, os, sys, time
 import numpy as np, torch, torch.nn as nn, torch.nn.functional as Fn
@@ -202,30 +204,40 @@ if __name__ == '__main__':
     elif what == 'M':
         full = [r for r in recs('S') if r['cols'] == 'full']; best = max(full, key=lambda r: r['val_mF1'])['name']
         print('stage M config', best, flush=True)
-        for s in (1, 2, 3, 4):
+        for s in (1, 2):
             if (best, s) not in have: run(best, s)
+    elif what == 'bagval':
+        full = [r for r in recs('S') if r['cols'] == 'full']; best = max(full, key=lambda r: r['val_mF1'])['name']
+        Z = [np.load(os.path.join(OUT, f'lob_val_{best}_s{s}.npz')) for s in (0, 1, 2)]
+        G = [np.load(os.path.join(OUT, f'v2_val_deep_base_s{s}.npz')) for s in (0, 1, 2)]
+        k = lambda z: z['day'].astype(np.int64) * 1_000_000 + z['row']; kz, kg = k(Z[0]), k(G[0]); common = np.intersect1d(kz, kg)
+        iz, ig = np.searchsorted(kz, common), np.searchsorted(kg, common); y = Z[0]['y'][iz]; assert (G[0]['y'][ig] == y).all()
+        pz = np.mean([z['prob'][iz] for z in Z], 0); pg = np.mean([g['prob'][ig] for g in G], 0)
+        log(dict(stage='bagval', name=best, n=int(len(y)), bag_mF1=round(mf1(y, pz.argmax(1)), 4), convgru_bag_mF1=round(mf1(y, pg.argmax(1)), 4),
+                 both_mF1=round(mf1(y, (pz + pg).argmax(1)), 4), seed_mF1=[round(mf1(y, z['prob'][iz].argmax(1)), 4) for z in Z]))
     elif what == 'test' and not recs('test'):
         full = [r for r in recs('S') if r['cols'] == 'full']; best = max(full, key=lambda r: r['val_mF1'])['name']
-        arch, key, T = CONFIGS[best]; off = np.arange(-T + 1, 1); seeds = sorted(r['seed'] for r in recs() if r['name'] == best and r.get('stage') in ('S', 'M'))
+        arch, key, T = CONFIGS[best]; seeds = sorted(r['seed'] for r in recs() if r['name'] == best and r.get('stage') in ('S', 'M'))
         argv = sys.argv; sys.argv = argv[:1]; import deep_v2 as D; sys.argv = argv
         te = [d for d in E.TE if float(C.load_day(d)['cov']) >= C.MIN_COV]
-        F, Y, V, gseg, day, row, cov = D.load(te, COLS[key])
-        ok = V[:, hi].copy(); ok[:T - 1] = False; ok[T - 1:] &= gseg[T - 1:] == gseg[:-(T - 1)]; ev = np.where(ok)[0]
-        ck = torch.load(os.path.join(OUT, f'lob_{best}_s{seeds[0]}.pt'), weights_only=False)
-        np.subtract(F, ck['mu'], out=F); np.divide(F, ck['sd'], out=F); np.clip(F, -10, 10, out=F)
-        probs = []
-        for s in seeds:
-            ck = torch.load(os.path.join(OUT, f'lob_{best}_s{s}.pt'), weights_only=False); net = make(arch, F.shape[1], T); net.load_state_dict(ck['state'])
-            probs.append(predict(net, F, ev, off))
-        prob = np.mean(probs, 0); p = prob.argmax(1); y = Y[ev, hi]; d = day[ev]
+        F, Y, V, gseg, day, row, cov = D.load(te, E.FULL)
+        def windows(T):
+            ok = V[:, hi].copy(); ok[:T - 1] = False; ok[T - 1:] &= gseg[T - 1:] == gseg[:-(T - 1)]; return np.where(ok)[0]
+        ev, ev50 = windows(T), windows(50); ev = np.intersect1d(ev, ev50)
+        cc = [E.FULL.index(c) for c in COLS[key]]
+        def probs_of(paths, build, Tm, sub):
+            o = []; off = np.arange(-Tm + 1, 1)
+            for p in paths:
+                ck = torch.load(p, weights_only=False); G_ = (F[:, sub] - ck['mu']) / ck['sd']; np.clip(G_, -10, 10, out=G_)
+                net = build(); net.load_state_dict(ck['state']); o.append(predict(net, G_.astype(np.float32), ev, off)); del G_
+            return o
+        P = probs_of([os.path.join(OUT, f'lob_{best}_s{s}.pt') for s in seeds], lambda: make(arch, len(cc), T), T, cc)
+        R = probs_of([os.path.join(OUT, f'v2_deep_base_s{s}.pt') for s in (0, 1, 2)], lambda: D.make(D.CONFIGS['base'], len(E.FULL)), 50, list(range(len(E.FULL))))
+        y = Y[ev, hi]; d = day[ev]; prob = np.mean(P, 0); p = prob.argmax(1); pr = np.mean(R, 0).argmax(1)
         rec = dict(stage='test', name=best, seeds=seeds, n=int(len(y)), mF1=round(mf1(y, p), 4), acc=round(float(accuracy_score(y, p)), 4),
-                   seed_mF1=[round(mf1(y, q.argmax(1)), 4) for q in probs], confusion=confusion_matrix(y, p).tolist(),
+                   seed_mF1=[round(mf1(y, q.argmax(1)), 4) for q in P], convgru_bag_mF1=round(mf1(y, pr), 4),
+                   convgru_seed_mF1=[round(mf1(y, q.argmax(1)), 4) for q in R], both_mF1=round(mf1(y, (prob + np.mean(R, 0)).argmax(1)), 4),
+                   boot_vs_convgru=boot(y, d, p, pr), confusion=confusion_matrix(y, p).tolist(),
                    day_mF1={str(k): round(mf1(y[d == k], p[d == k]), 4) for k in np.unique(d)})
-        ref = np.load(os.path.join(OUT, 'test_pred_gru_tuned_H5.npz')); kr = ref['day'].astype(np.int64) * 1_000_000; k_ = d.astype(np.int64) * 1_000_000 + row[ev]
-        # the reference has no row index: align on (day, position among that day's valid T=50 windows) via the 5 s label order
-        if T == 50 and len(ref['y']) == len(y) and (ref['y'] == y).all():
-            pr = ref['prob'].argmax(1); rec.update(ref_tuned_gru_mF1=round(mf1(y, pr), 4), boot_vs_ref=boot(y, d, p, pr))
-        else:
-            rec['ref_note'] = 'different rows (window length differs); compare macro-F1 only'
         log(rec)
         np.savez_compressed(os.path.join(OUT, f'lob_test_{best}.npz'), prob=prob.astype(np.float32), y=y, day=d, row=row[ev])
