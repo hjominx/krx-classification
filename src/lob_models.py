@@ -35,6 +35,7 @@ import common as C
 import exp_v2 as E
 
 torch.set_num_threads(int(os.environ.get('OMP_NUM_THREADS', 2)))
+DEV = torch.device('cuda' if torch.cuda.is_available() else 'cpu')   # GPU when present; CPU runs are unchanged
 OUT = E.OUT; RES = os.path.join(OUT, 'lob_models.jsonl'); mf1 = E.mf1
 HS = list(C.HORIZONS); hi = HS.index(5); BS, EPOCHS, PER, PAT = 256, 12, 200_000, 3
 RAW = list(range(40))                                    # ask_dist0-9, bid_dist0-9, log_aq0-9, log_bq0-9 of common.py
@@ -137,7 +138,7 @@ def get_data(key, T, days=None):
 def predict(net, F, idx, off):
     net.eval(); o = []
     with torch.no_grad():
-        for j in range(0, len(idx), 2048): o.append(torch.softmax(net(torch.from_numpy(F[idx[j:j + 2048, None] + off])), 1).numpy())
+        for j in range(0, len(idx), 2048): o.append(torch.softmax(net(torch.from_numpy(F[idx[j:j + 2048, None] + off]).to(DEV)), 1).cpu().numpy())
     return np.concatenate(o)
 
 
@@ -156,14 +157,14 @@ def run(name, seed, smoke=False):
     torch.manual_seed(seed); rng = np.random.default_rng(seed)
     F, Y, V, day, row, tr, va_all, mu, sd = get_data(key, T, days=(E.TR[:2] + E.VA[:1]) if smoke else None)
     va = va_all[::10]; per, epochs = (2048, 1) if smoke else (PER, EPOCHS)
-    net = make(arch, F.shape[1], T); shadow = make(arch, F.shape[1], T)
-    w = torch.tensor(len(tr) / (3 * np.bincount(Y[tr, hi], minlength=3)), dtype=torch.float32); lossf = nn.CrossEntropyLoss(weight=w)
+    net = make(arch, F.shape[1], T).to(DEV); shadow = make(arch, F.shape[1], T).to(DEV)
+    w = torch.tensor(len(tr) / (3 * np.bincount(Y[tr, hi], minlength=3)), dtype=torch.float32, device=DEV); lossf = nn.CrossEntropyLoss(weight=w)
     opt = torch.optim.Adam(net.parameters(), LR[arch]); ema = {k: v.detach().clone() for k, v in net.state_dict().items()}; step = 0
     yv = Y[va, hi]; best, bad, curve, t0 = -1, 0, [], time.time()
     for ep in range(epochs):
         net.train(); sel = rng.choice(tr, min(per, len(tr)), replace=False)
         for k in range(0, len(sel), BS):
-            b = sel[k:k + BS]; loss = lossf(net(torch.from_numpy(F[b[:, None] + off])), torch.from_numpy(Y[b, hi]))
+            b = sel[k:k + BS]; loss = lossf(net(torch.from_numpy(F[b[:, None] + off]).to(DEV)), torch.from_numpy(Y[b, hi]).to(DEV))
             opt.zero_grad(); loss.backward(); nn.utils.clip_grad_norm_(net.parameters(), 1.0); opt.step()
             with torch.no_grad():
                 step += 1; dec = min(0.999, (1 + step) / (10 + step))
@@ -177,13 +178,13 @@ def run(name, seed, smoke=False):
             bad += 1
             if bad >= PAT: break
     net.load_state_dict(state); prob = predict(net, F, va_all, off); y = Y[va_all, hi]; p = prob.argmax(1)
-    rec = dict(stage='M' if seed else 'S', name=name, seed=seed, arch=arch, cols=key, T=T, n_features=F.shape[1],
+    rec = dict(stage='M' if seed else 'S', name=name, seed=seed, device=DEV.type, arch=arch, cols=key, T=T, n_features=F.shape[1],
                n_params=sum(q.numel() for q in net.parameters()), lr=LR[arch], layers=LAYERS[arch], best_epoch=best_ep, best_weights=which,
                val10_mF1=round(best, 4), val_mF1=round(mf1(y, p), 4), val_acc=round(float(accuracy_score(y, p)), 4),
                min_per_epoch=round((time.time() - t0) / 60 / len(curve), 1), curve=curve)
     if smoke: print('smoke', tag, rec['n_params'], rec['min_per_epoch'], rec['val_mF1'], flush=True); return rec
     np.savez_compressed(os.path.join(OUT, f'lob_val_{tag}.npz'), prob=prob.astype(np.float32), y=y, day=day[va_all], row=row[va_all])
-    torch.save(dict(state=state, mu=mu, sd=sd), os.path.join(OUT, f'lob_{tag}.pt')); log(rec); return rec
+    torch.save(dict(state={k: v.cpu() for k, v in state.items()}, mu=mu, sd=sd), os.path.join(OUT, f'lob_{tag}.pt')); log(rec); return rec
 
 
 def boot(y, d, p_new, p_ref, n=2000, seed=1):
@@ -228,8 +229,8 @@ if __name__ == '__main__':
         def probs_of(paths, build, Tm, sub):
             o = []; off = np.arange(-Tm + 1, 1)
             for p in paths:
-                ck = torch.load(p, weights_only=False); G_ = (F[:, sub] - ck['mu']) / ck['sd']; np.clip(G_, -10, 10, out=G_)
-                net = build(); net.load_state_dict(ck['state']); o.append(predict(net, G_.astype(np.float32), ev, off)); del G_
+                ck = torch.load(p, weights_only=False, map_location='cpu'); G_ = (F[:, sub] - ck['mu']) / ck['sd']; np.clip(G_, -10, 10, out=G_)
+                net = build(); net.load_state_dict(ck['state']); net.to(DEV); o.append(predict(net, G_.astype(np.float32), ev, off)); del G_
             return o
         P = probs_of([os.path.join(OUT, f'lob_{best}_s{s}.pt') for s in seeds], lambda: make(arch, len(cc), T), T, cc)
         R = probs_of([os.path.join(OUT, f'v2_deep_base_s{s}.pt') for s in (0, 1, 2)], lambda: D.make(D.CONFIGS['base'], len(E.FULL)), 50, list(range(len(E.FULL))))

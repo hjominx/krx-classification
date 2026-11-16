@@ -22,7 +22,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, accuracy_score
 import common as C
 
-OUT = os.path.join(C.ROOT, 'results'); RES = os.path.join(OUT, 'v2.jsonl')
+OUT = os.environ.get('KRX_RESULTS') or os.path.join(C.ROOT, 'results'); os.makedirs(OUT, exist_ok=True)   # KRX_RESULTS: separate output folder (e.g. a GPU run)
+RES = os.path.join(OUT, 'v2.jsonl')
 FT, F2 = os.path.join(C.DATA, 'feat_tr'), os.path.join(C.DATA, 'feat2')
 H = 5; hi = C.HORIZONS.index(H)
 TR0, VA, TE = C.split_days()
