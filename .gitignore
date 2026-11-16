@@ -9,3 +9,5 @@ __pycache__/
 .ipynb_checkpoints/
 results_gpu/*.npz
 results_gpu/*.pt
+results/*.tmp
+results_gpu/*.tmp

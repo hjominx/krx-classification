@@ -160,8 +160,15 @@ def run(name, seed, smoke=False):
     net = make(arch, F.shape[1], T).to(DEV); shadow = make(arch, F.shape[1], T).to(DEV)
     w = torch.tensor(len(tr) / (3 * np.bincount(Y[tr, hi], minlength=3)), dtype=torch.float32, device=DEV); lossf = nn.CrossEntropyLoss(weight=w)
     opt = torch.optim.Adam(net.parameters(), LR[arch]); ema = {k: v.detach().clone() for k, v in net.state_dict().items()}; step = 0
-    yv = Y[va, hi]; best, bad, curve, t0 = -1, 0, [], time.time()
-    for ep in range(epochs):
+    yv = Y[va, hi]; best, bad, curve, t0 = -1, 0, [], time.time(); start = 0
+    ckp = os.path.join(OUT, f'lob_ckpt_{tag}.pt')               # per-epoch checkpoint: an interrupted run resumes here
+    if os.path.exists(ckp) and not smoke:
+        c = torch.load(ckp, weights_only=False, map_location=DEV)
+        net.load_state_dict(c['net']); opt.load_state_dict(c['opt']); ema = c['ema']; step = c['step']; rng.bit_generator.state = c['rng']
+        torch.set_rng_state(c['torch_rng']); best, bad, curve, state, best_ep, which = c['best'], c['bad'], c['curve'], c['state'], c['best_ep'], c['which']
+        start = c['epoch'] + 1; t0 -= c['elapsed']; print(tag, 'resumed after epoch', c['epoch'], flush=True)
+    stop = start > 0 and bad >= PAT
+    for ep in range(start, 0 if stop else epochs):
         net.train(); sel = rng.choice(tr, min(per, len(tr)), replace=False)
         for k in range(0, len(sel), BS):
             b = sel[k:k + BS]; loss = lossf(net(torch.from_numpy(F[b[:, None] + off]).to(DEV)), torch.from_numpy(Y[b, hi]).to(DEV))
@@ -174,9 +181,12 @@ def run(name, seed, smoke=False):
         curve.append(dict(epoch=ep, raw=round(fr, 4), ema=round(fe, 4), min=round((time.time() - t0) / 60, 1))); print(tag, curve[-1], flush=True)
         f, st, wh = max((fr, {a: b.clone() for a, b in net.state_dict().items()}, 'raw'), (fe, {a: b.clone() for a, b in ema.items()}, 'ema'), key=lambda c: c[0])
         if f > best: best, bad, state, best_ep, which = f, 0, st, ep, wh
-        else:
-            bad += 1
-            if bad >= PAT: break
+        else: bad += 1
+        if not smoke:
+            torch.save(dict(net=net.state_dict(), opt=opt.state_dict(), ema=ema, step=step, rng=rng.bit_generator.state, torch_rng=torch.get_rng_state(),
+                            best=best, bad=bad, curve=curve, state=state, best_ep=best_ep, which=which, epoch=ep, elapsed=time.time() - t0), ckp + '.tmp')
+            os.replace(ckp + '.tmp', ckp)
+        if bad >= PAT: break
     net.load_state_dict(state); prob = predict(net, F, va_all, off); y = Y[va_all, hi]; p = prob.argmax(1)
     rec = dict(stage='M' if seed else 'S', name=name, seed=seed, device=DEV.type, arch=arch, cols=key, T=T, n_features=F.shape[1],
                n_params=sum(q.numel() for q in net.parameters()), lr=LR[arch], layers=LAYERS[arch], best_epoch=best_ep, best_weights=which,
@@ -184,7 +194,9 @@ def run(name, seed, smoke=False):
                min_per_epoch=round((time.time() - t0) / 60 / len(curve), 1), curve=curve)
     if smoke: print('smoke', tag, rec['n_params'], rec['min_per_epoch'], rec['val_mF1'], flush=True); return rec
     np.savez_compressed(os.path.join(OUT, f'lob_val_{tag}.npz'), prob=prob.astype(np.float32), y=y, day=day[va_all], row=row[va_all])
-    torch.save(dict(state={k: v.cpu() for k, v in state.items()}, mu=mu, sd=sd), os.path.join(OUT, f'lob_{tag}.pt')); log(rec); return rec
+    torch.save(dict(state={k: v.cpu() for k, v in state.items()}, mu=mu, sd=sd), os.path.join(OUT, f'lob_{tag}.pt')); log(rec)
+    if os.path.exists(ckp): os.remove(ckp)
+    return rec
 
 
 def boot(y, d, p_new, p_ref, n=2000, seed=1):
@@ -198,10 +210,18 @@ if __name__ == '__main__':
     what = sys.argv[1]; have = {(r['name'], r['seed']) for r in recs()}
     if what == 'smoke':
         for n in CONFIGS: run(n, 0, smoke=True)
+    elif what.startswith('S:'):
+        for n in what[2:].split(','):
+            if (n, 0) not in have: run(n, 0)
     elif what == 'S':
         order = ['mlplob_raw50', 'tlob_raw50', 'mlplob_full50', 'tlob_full50', 'tlob_full128', 'mlplob_full128']
         for n in order:
             if (n, 0) not in have: run(n, 0)
+    elif what.startswith('M:'):
+        full = [r for r in recs('S') if r['cols'] == 'full']; best = max(full, key=lambda r: r['val_mF1'])['name']
+        print('stage M config', best, flush=True)
+        for s_ in what[2:].split(','):
+            if (best, int(s_)) not in have: run(best, int(s_))
     elif what == 'M':
         full = [r for r in recs('S') if r['cols'] == 'full']; best = max(full, key=lambda r: r['val_mF1'])['name']
         print('stage M config', best, flush=True)
