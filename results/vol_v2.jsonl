@@ -6,3 +6,20 @@
 {"stage": "L", "name": "logreg_allv", "mF1": 0.6188, "best_m": 1.0, "mF1_at_best_m": 0.6188, "acc": 0.6301, "day_mean": 0.5931, "day_min": 0.4871, "recall": [0.7451, 0.5781, 0.4826], "sec": 15}
 {"stage": "G", "name": "gru_s0", "mF1": 0.6288, "best_epoch": 0, "best_weights": "raw", "val10_mF1": 0.6296, "curve": [{"epoch": 0, "raw": 0.6296, "ema": 0.6185}, {"epoch": 1, "raw": 0.6111, "ema": 0.6132}, {"epoch": 2, "raw": 0.6056, "ema": 0.6087}, {"epoch": 3, "raw": 0.5965, "ema": 0.6028}], "acc": 0.6321, "day_mean": 0.5965, "day_min": 0.497, "recall": [0.6921, 0.6089, 0.5436], "sec": 239}
 {"stage": "G", "name": "gru_s1", "mF1": 0.6172, "best_epoch": 2, "best_weights": "ema", "val10_mF1": 0.6178, "curve": [{"epoch": 0, "raw": 0.61, "ema": 0.6156}, {"epoch": 1, "raw": 0.6032, "ema": 0.6146}, {"epoch": 2, "raw": 0.615, "ema": 0.6178}, {"epoch": 3, "raw": 0.5943, "ema": 0.6082}, {"epoch": 4, "raw": 0.5914, "ema": 0.5975}, {"epoch": 5, "raw": 0.5942, "ema": 0.5902}], "acc": 0.6323, "day_mean": 0.5883, "day_min": 0.4624, "recall": [0.7421, 0.5923, 0.4637], "sec": 634}
+{"stage": "G", "name": "gru_s2", "mF1": 0.6253, "best_epoch": 0, "best_weights": "raw", "val10_mF1": 0.6261, "curve": [{"epoch": 0, "raw": 0.6261, "ema": 0.6167}, {"epoch": 1, "raw": 0.609, "ema": 0.613}, {"epoch": 2, "raw": 0.6044, "ema": 0.6075}, {"epoch": 3, "raw": 0.595, "ema": 0.5996}], "acc": 0.634, "day_mean": 0.5968, "day_min": 0.4808, "recall": [0.7066, 0.6109, 0.5127], "sec": 307}
+{"stage": "E", "name": "gru_s0", "members": ["gru_s0"], "m": 1.0, "mF1": 0.6288}
+{"stage": "E", "name": "gru_s1", "members": ["gru_s1"], "m": 1.0, "mF1": 0.6172}
+{"stage": "E", "name": "gru_s2", "members": ["gru_s2"], "m": 1.0, "mF1": 0.6253}
+{"stage": "E", "name": "gbm", "members": ["gbm"], "m": 0.9, "mF1": 0.6301, "mF1_m1": 0.6283}
+{"stage": "E", "name": "logreg", "members": ["logreg"], "m": 1.0, "mF1": 0.6187, "mF1_m1": 0.6187}
+{"stage": "E", "name": "gru", "members": ["gru"], "m": 0.9, "mF1": 0.6296, "mF1_m1": 0.6294}
+{"stage": "E", "name": "gbm+logreg", "members": ["gbm", "logreg"], "m": 0.9, "mF1": 0.6288, "mF1_m1": 0.6282}
+{"stage": "E", "name": "gbm+gru", "members": ["gbm", "gru"], "m": 0.9, "mF1": 0.6336, "mF1_m1": 0.6332}
+{"stage": "E", "name": "logreg+gru", "members": ["logreg", "gru"], "m": 1.0, "mF1": 0.6273, "mF1_m1": 0.6273}
+{"stage": "E", "name": "gbm+logreg+gru", "members": ["gbm", "logreg", "gru"], "m": 0.9, "mF1": 0.6315, "mF1_m1": 0.6307}
+{"stage": "E", "name": "gbr", "members": ["gbr"], "thr": [2.0, 2.85], "mF1": 0.6412}
+{"stage": "E_winner", "name": "gbr", "members": ["gbr"], "thr": [2.0, 2.85], "val_mF1": 0.6412}
+{"stage": "E_half", "chosen_on": [20261006, 20261012, 20261013, 20261014, 20261015, 20261016], "chosen": "gbr", "m": 0.8, "mF1_on_other_half": 0.6398, "gbm_m1_on_other_half": 0.6446}
+{"stage": "E_half", "chosen_on": [20261019, 20261020, 20261021, 20261022, 20261023, 20261026], "chosen": "gbm+gru", "m": 1.0, "mF1_on_other_half": 0.6174, "gbm_m1_on_other_half": 0.6109}
+{"stage": "test", "name": "train", "pipeline": "gbr", "n": 919724, "mF1": 0.6612, "acc": 0.6535, "day_mean": 0.5828, "day_min": 0.4698, "recall": [0.6331, 0.6594, 0.679], "confusion": [[220171, 124153, 3433], [76119, 251645, 53870], [2435, 58666, 129232]], "day_mF1": {"20261027": 0.6906, "20261028": 0.6147, "20261029": 0.6712, "20261030": 0.4947, "20261102": 0.6043, "20261103": 0.6097, "20261104": 0.5117, "20261105": 0.5521, "20261106": 0.4698, "20261109": 0.6095}, "sec": 46, "ref_v0_gbm_mF1": 0.6569, "boot_new_minus_ref": {"mean": 0.0035, "ci95": [-0.0053, 0.0086]}}
+{"stage": "test", "name": "train+val", "pipeline": "gbr", "n": 919724, "mF1": 0.6606, "acc": 0.6529, "day_mean": 0.5805, "day_min": 0.459, "recall": [0.6181, 0.6722, 0.6776], "confusion": [[214956, 129350, 3451], [71849, 256523, 53262], [2084, 59276, 128973]], "day_mF1": {"20261027": 0.6978, "20261028": 0.6135, "20261029": 0.6686, "20261030": 0.4875, "20261102": 0.6024, "20261103": 0.6074, "20261104": 0.5074, "20261105": 0.5496, "20261106": 0.459, "20261109": 0.612}, "sec": 35, "ref_v0_gbm_mF1": 0.6569, "boot_new_minus_ref": {"mean": 0.0028, "ci95": [-0.0073, 0.0091]}}
