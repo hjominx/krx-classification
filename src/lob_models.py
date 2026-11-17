@@ -207,7 +207,7 @@ def boot(y, d, p_new, p_ref, n=2000, seed=1):
 
 
 if __name__ == '__main__':
-    what = sys.argv[1]; have = {(r['name'], r['seed']) for r in recs()}
+    what = sys.argv[1]; have = {(r['name'], r.get('seed')) for r in recs()}
     if what == 'smoke':
         for n in CONFIGS: run(n, 0, smoke=True)
     elif what.startswith('S:'):
