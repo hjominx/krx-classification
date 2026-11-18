@@ -12,7 +12,8 @@ Configs
   mt_big         : mt with 400,000 windows per epoch, batch 512
 Stage R1: the four variants with seeds 0, 1 (compare with mt seeds 0, 1 of deep_v2.py, mean full-VAL 0.5129).
 Stage R2: variants whose seed-0/1 mean beats mt's get seeds 2-4 (bag of 5, as in round 2).
-Stage S : base, mt, tcn seeds 5-9.
+Stage S : base, mt, tcn seeds 5-9.  Added after R2, before any combination was scored: mt_st2 seeds 5-9 (S:mt_st2),
+          so every deep bag has 10 seeds.
 Each run saves its probabilities on every valid VAL window -> results/r3_val_<cfg>_s<seed>.npz (prob, y, day, row)
 and its weights -> results/r3_deep_<cfg>_s<seed>.pt.
 usage: python deep_r3.py R1|R2|S|S:<cfg>|<cfg>:<seed>,... [threads]   -> results/r3_deep.jsonl

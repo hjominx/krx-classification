@@ -44,18 +44,19 @@ def day_matrix(d, lag):
     return X[w], z['Y'][w, E.hi].astype(int), w, cov
 
 
-def stack(days, lag, sub=1, eval_only=False):
+def stack(days, lag, sub=1, eval_only=False, dtype=np.float32):
+    """dtype float64 for training: the GBM converts to float64 anyway, so this saves a second full copy"""
     Xs, Ys, Ds, Rs = [], [], [], []
     for d in days:
         x, y, r, cov = day_matrix(d, lag)
         if eval_only and cov < C.MIN_COV: continue
-        Xs.append(x[::sub]); Ys.append(y[::sub]); Rs.append(r[::sub]); Ds.append(np.full(len(y[::sub]), int(d)))
+        Xs.append(np.array(x[::sub], dtype=dtype)); Ys.append(y[::sub]); Rs.append(r[::sub]); Ds.append(np.full(len(y[::sub]), int(d))); del x
     return np.concatenate(Xs), np.concatenate(Ys), np.concatenate(Ds), np.concatenate(Rs)
 
 
 def run(name):
     t0 = time.time(); lag = 'lag' in name; rec = 'rec' in name
-    Xtr, ytr, dtr, _ = stack(E.TR, lag, sub=2); Xva, yva, dva, rva = stack(E.VA, lag, eval_only=True)
+    Xtr, ytr, dtr, _ = stack(E.TR, lag, sub=2, dtype=np.float64); Xva, yva, dva, rva = stack(E.VA, lag, eval_only=True)
     sw = None
     if rec: dd = np.unique(dtr); sw = np.exp(REC * np.searchsorted(dd, dtr) / (len(dd) - 1))
     m = HGB(max_iter=800, **HP).fit(Xtr, ytr, sample_weight=sw); del Xtr
