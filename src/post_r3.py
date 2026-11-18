@@ -5,9 +5,11 @@ Rows   : the VAL rows every member in the pool can score (keys day x row), so al
 Pool   : gbm, logreg (exp_v2.py); bags base / mt / tcn of all seeds present (deep_v2.py seeds 0-4 + deep_r3.py 5-9);
          the round-3 variants with 5 seeds (deep_r3.py R2); the round-3 GBMs (gbm_r3.py).  A bag is the plain mean of
          its seeds' probabilities.
-         pool 'main' leaves out TLOB: one TLOB prediction costs 29x a conv+GRU one, too slow for ~4.5 snapshots/s on
-         a CPU. Note: this rule was set after TLOB's TEST result (lob_models.py) was known. pool 'with_tlob' adds
-         the TLOB bag (3 seeds) and is reported for reference only.
+         pool 'main' leaves out TLOB: one TLOB prediction costs 29x a conv+GRU one. Note: this rule was set after
+         TLOB's TEST result (lob_models.py) was known. Measured afterwards (cost_r3.py): every pipeline here, TLOB
+         included, runs far faster than ~4.5 snapshots/s on 2 CPU threads, and the 40 deep members of the main pool
+         together take longer per single window than the 3 TLOB models; so cost does not justify the rule, and it
+         rests on TLOB's TEST result. pool 'with_tlob' adds the TLOB bag (3 seeds) and is reported for reference only.
 Methods (each scored on VAL macro-F1)
   avg    : plain mean of every subset of up to 5 members, flat-class multiplier m from (0.7 ... 1.3)  [as in round 2]
   cls    : the 5 best 'avg' subsets with a multiplier per class: flat m in 0.80-1.40 (step 0.05) and up/down
