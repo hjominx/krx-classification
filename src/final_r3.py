@@ -12,7 +12,6 @@ usage: python final_r3.py [threads]  -> results/r3_final.jsonl, results/r3_test.
 """
 import json, os, pickle, sys, time
 import numpy as np, torch
-from sklearn.ensemble import HistGradientBoostingClassifier as HGB
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix
 import common as C
@@ -97,11 +96,12 @@ if __name__ == '__main__':
         Pv, kv = PR.load_pool(PR.pool_files()); yv = Pv.pop('y'); names = sorted(Pv); assert names == sorted(w['members'])
         lv = np.log(np.clip(np.hstack([Pv[n] for n in names]), 1e-6, 1)); lt = np.log(np.clip(np.hstack([Pm[n] for n in names]), 1e-6, 1))
         if w['ctx']: lv = np.hstack([lv, PR.context(kv)[0]]); lt = np.hstack([lt, PR.context(keys)[0]])
+        sm = PR.stack_model(w['stack_kind'], w.get('class_weight', 'balanced'))
         if w['stack_kind'] == 'lr':
             mu, sd = lv.mean(0), lv.std(0) + 1e-6
-            prob = LogisticRegression(max_iter=300, class_weight='balanced').fit(((lv - mu) / sd)[::3], yv[::3]).predict_proba((lt - mu) / sd)
+            prob = sm.fit(((lv - mu) / sd)[::3], yv[::3]).predict_proba((lt - mu) / sd)
         else:
-            prob = HGB(max_iter=150, learning_rate=0.05, max_leaf_nodes=15, min_samples_leaf=500, class_weight='balanced', random_state=0).fit(lv[::3], yv[::3]).predict_proba(lt)
+            prob = sm.fit(lv[::3], yv[::3]).predict_proba(lt)
     else:
         prob = np.mean([Pm[n] for n in w['members']], 0)
         if w['method'] == 'smooth': prob = PR.smooth(prob, keys, w['alpha'])

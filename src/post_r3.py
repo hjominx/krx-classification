@@ -16,7 +16,12 @@ Methods (each scored on VAL macro-F1)
            the same segment, p~_t = (1 - a) p_t + a p~_{t-1}, a in (0.3, 0.5, 0.7, 0.8, 0.9), then m
   stack  : a model on the members' log-probabilities (+ time of day, spread, short-term volatility):
            multinomial logistic regression and a small GBM; scores are leave-one-day-out over the 12 VAL days, so a
-           VAL score never comes from a model that saw that day; then m
+           VAL score never comes from a model that saw that day; then a multiplier per class
+           Changed after the dry run on the round-2 members (before any round-3 result): VAL is 62.5 % 'flat', so the
+           class-balanced stacker predicts 'flat' far less than the members and its best flat multiplier lay at the
+           edge of the grid (1.3, VAL 0.511). Each stacker is therefore also fitted without class weights ('_uw',
+           calibrated VAL probabilities), and every stacker gets the per-class multiplier search over a wide grid
+           (flat 0.40-2.00 step 0.05, up/down ratio 0.90-1.10 step 0.025). The balanced stackers are kept as designed.
 Winner : highest VAL macro-F1.  Split-half check: the whole selection is repeated on VAL days 1-6 and scored on days
          7-12 and the reverse, next to the round-2 winner on the same halves.
 usage: python post_r3.py main|with_tlob -> results/r3_post.jsonl
@@ -33,6 +38,7 @@ OUT = E.OUT; SMOKE = os.environ.get('R3_POST_SMOKE')         # SMOKE: round-2 fi
 RES = SMOKE or os.path.join(OUT, 'r3_post.jsonl')
 KEY = lambda z: z['day'].astype(np.int64) * 1_000_000 + z['row'].astype(np.int64)
 MS = E.MS; MF = np.round(np.arange(0.80, 1.401, 0.05), 3); UD = np.round(np.arange(0.90, 1.101, 0.025), 3); AL = (0.3, 0.5, 0.7, 0.8, 0.9)
+MFW = np.round(np.arange(0.40, 2.001, 0.05), 3)              # wide flat grid for the stackers
 KMAX = 5                                                   # largest subset size tried
 
 
@@ -99,10 +105,10 @@ def best_flat(pr, y, rows=None):
     s = {m: mf1(y, apply(pr, [1, m, 1])) for m in MS}; m = max(s, key=s.get); return s[m], [1.0, m, 1.0]
 
 
-def best_cls(pr, y, rows=None):
+def best_cls(pr, y, rows=None, grid=MF):
     if rows is not None: pr, y = pr[rows], y[rows]
     best = (-1, None)
-    for m in MF:
+    for m in grid:
         for u in UD:
             f = mf1(y, apply(pr, [1, m, u]))
             if f > best[0]: best = (f, [1.0, float(m), float(u)])
@@ -126,16 +132,21 @@ def context(keys):
     return out, [allnames[i] for i in want]
 
 
-def stack_cv(feats, y, d, kind):
+def stack_model(kind, cw):
+    if kind == 'lr': return LogisticRegression(max_iter=300, class_weight=cw)
+    return HGB(max_iter=150, learning_rate=0.05, max_leaf_nodes=15, min_samples_leaf=500, class_weight=cw, random_state=0)
+
+
+def stack_cv(feats, y, d, kind, cw='balanced'):
     """leave-one-day-out probabilities of a stacking model"""
     pr = np.zeros((len(y), 3))
     for k in np.unique(d):
         tr, te = d != k, d == k
         if kind == 'lr':
             mu, sd = feats[tr].mean(0), feats[tr].std(0) + 1e-6
-            m = LogisticRegression(max_iter=300, class_weight='balanced').fit(((feats[tr] - mu) / sd)[::3], y[tr][::3]); pr[te] = m.predict_proba((feats[te] - mu) / sd)
+            m = stack_model(kind, cw).fit(((feats[tr] - mu) / sd)[::3], y[tr][::3]); pr[te] = m.predict_proba((feats[te] - mu) / sd)
         else:
-            m = HGB(max_iter=150, learning_rate=0.05, max_leaf_nodes=15, min_samples_leaf=500, class_weight='balanced', random_state=0)
+            m = stack_model(kind, cw)
             pr[te] = m.fit(feats[tr][::3], y[tr][::3]).predict_proba(feats[te])
     return pr
 
@@ -172,15 +183,17 @@ if __name__ == '__main__':
     ctx, cn = context(keys); lp = np.log(np.clip(np.hstack([Pr[n] for n in names]), 1e-6, 1))
     for kind in ('lr', 'gbm'):
         for use_ctx in (False, True):
-            X = np.hstack([lp, ctx]) if use_ctx else lp; pr = stack_cv(X, y, d, kind); f, mm = best_flat(pr, y)
-            nm = f'stack_{kind}' + ('_ctx' if use_ctx else '') + ('' if POOL == 'main' else '_' + POOL)
-            if not SMOKE: np.savez_compressed(os.path.join(OUT, f'r3_val_{nm}.npz'), prob=pr.astype(np.float32), y=y, day=d, row=keys % 1_000_000)
-            log(dict(stage='stack', name=nm, ctx=cn if use_ctx else [], mF1_m1=round(mf1(y, pr.argmax(1)), 4), mF1=round(f, 4), m=mm[1], sec=round(time.time() - t0)))
-            cand.append((f, nm, None, ('stack', kind, use_ctx, mm)))
+            for cw in ('balanced', None):
+                X = np.hstack([lp, ctx]) if use_ctx else lp; pr = stack_cv(X, y, d, kind, cw); f, mm = best_cls(pr, y, grid=MFW)
+                nm = f'stack_{kind}' + ('_ctx' if use_ctx else '') + ('' if cw else '_uw') + ('' if POOL == 'main' else '_' + POOL)
+                if not SMOKE: np.savez_compressed(os.path.join(OUT, f'r3_val_{nm}.npz'), prob=pr.astype(np.float32), y=y, day=d, row=keys % 1_000_000)
+                log(dict(stage='stack', name=nm, ctx=cn if use_ctx else [], class_weight=cw, mF1_m1=round(mf1(y, pr.argmax(1)), 4), mF1=round(f, 4), mult=mm,
+                         sec=round(time.time() - t0)))
+                cand.append((f, nm, None, ('stack', kind, use_ctx, cw, mm)))
     cand.sort(key=lambda c: -c[0]); w = cand[0]
     how = w[3]; spec_ = dict(method=how[0], members=list(w[2]) if w[2] else names, mult=list(how[-1]))
     if how[0] == 'smooth': spec_['alpha'] = how[1]
-    if how[0] == 'stack': spec_.update(stack_kind=how[1], ctx=bool(how[2]))
+    if how[0] == 'stack': spec_.update(stack_kind=how[1], ctx=bool(how[2]), class_weight=how[3])
     log(dict(stage='winner', name=w[1], mF1=round(w[0], 4), **spec_, r2_winner_mF1=round(mf1(y, apply(ref, [1, 1.1, 1])), 4)))
     # split-half check (avg / cls / smooth candidates; stacking is already scored out of sample)
     days = np.unique(d); halves = (days[:len(days) // 2], days[len(days) // 2:])
