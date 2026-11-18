@@ -19,3 +19,77 @@
 {"pool": "with_tlob", "stage": "member", "name": "tlob", "n_seeds": 3, "mF1_m1": 0.5183, "mF1": 0.5183, "m": 1.1}
 {"pool": "main", "stage": "member", "name": "mt_st2", "n_seeds": 10, "mF1_m1": 0.5158, "mF1": 0.5171, "m": 1.1}
 {"pool": "main", "stage": "member", "name": "tcn", "n_seeds": 10, "mF1_m1": 0.5162, "mF1": 0.5167, "m": 1.1}
+{"pool": "main", "stage": "cand", "name": "cls:gbm_lag+mt+mt_st2", "mF1": 0.5185, "how": "('cls', [1.0, 1.1, 1.025])"}
+{"pool": "main", "stage": "cand", "name": "cls:gbm_lag+mt+tcn", "mF1": 0.5184, "how": "('cls', [1.0, 1.05, 0.975])"}
+{"pool": "main", "stage": "cand", "name": "cls:gbm_lag+gbm_rec+mt+mt_st2+tcn", "mF1": 0.5184, "how": "('cls', [1.0, 1.1, 1.025])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm_lag+mt", "mF1": 0.5183, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "cls:gbm_lag+mt", "mF1": 0.5183, "how": "('cls', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm_lag+mt+mt_st2", "mF1": 0.5183, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm_lag+mt+tcn", "mF1": 0.5183, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm_lag+gbm_rec+mt+mt_st2+tcn", "mF1": 0.5182, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm_rec+mt+mt_st2", "mF1": 0.5182, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "cls:gbm_rec+mt+mt_st2", "mF1": 0.5182, "how": "('cls', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm_rec+mt+mt_st2+tcn", "mF1": 0.5182, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:base+gbm_lag+gbm_rec+mt+tcn", "mF1": 0.5182, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:base+gbm_lag+mt", "mF1": 0.5182, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm_rec+mt+tcn", "mF1": 0.5182, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm_rec+mt", "mF1": 0.5181, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:base+gbm_lag+gbm_rec+mt", "mF1": 0.5181, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm+gbm_lag+mt+mt_st2+tcn", "mF1": 0.5181, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm_lag+gbm_rec+mt+tcn", "mF1": 0.5181, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm+gbm_lag+mt+tcn", "mF1": 0.5181, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm_lag+mt+mt_st2+tcn", "mF1": 0.5181, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:base+gbm+gbm_lag+mt+tcn", "mF1": 0.5181, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm+mt+mt_st2+tcn", "mF1": 0.5181, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:gbm_lag+gbm_rec+mt+mt_st2", "mF1": 0.5181, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:base+gbm_lag+gbm_rec+mt+mt_st2", "mF1": 0.518, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "cand", "name": "avg:base+gbm_lag+mt+mt_st2", "mF1": 0.518, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "cls:mt_st2+tlob", "mF1": 0.5204, "how": "('cls', [1.0, 1.1, 1.1])"}
+{"pool": "with_tlob", "stage": "cand", "name": "cls:mt+tlob", "mF1": 0.5204, "how": "('cls', [1.0, 1.1, 1.075])"}
+{"pool": "with_tlob", "stage": "cand", "name": "cls:gbm_rec+mt+tlob", "mF1": 0.5202, "how": "('cls', [1.0, 1.1, 1.05])"}
+{"pool": "with_tlob", "stage": "cand", "name": "cls:gbm_lag+mt+tlob", "mF1": 0.52, "how": "('cls', [1.0, 1.1, 1.05])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:mt+tlob", "mF1": 0.5198, "how": "('flat', [1.0, 1.0, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_rec+mt+tlob", "mF1": 0.5197, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_lag+mt+tlob", "mF1": 0.5197, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:mt_st2+tlob", "mF1": 0.5197, "how": "('flat', [1.0, 1.0, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_lag+gbm_rec+mt+tlob", "mF1": 0.5196, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "cls:gbm_lag+gbm_rec+mt+tlob", "mF1": 0.5196, "how": "('cls', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm+mt+tlob", "mF1": 0.5196, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_lag+mt+mt_st2+tlob", "mF1": 0.5196, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:tcn+tlob", "mF1": 0.5196, "how": "('flat', [1.0, 1.0, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_rec+mt_st2+tlob", "mF1": 0.5195, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_rec+tlob", "mF1": 0.5195, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_lag+tlob", "mF1": 0.5195, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_rec+tcn+tlob", "mF1": 0.5195, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_lag+mt_st2+tlob", "mF1": 0.5194, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_lag+mt+tcn+tlob", "mF1": 0.5194, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_rec+mt+mt_st2+tlob", "mF1": 0.5194, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm+gbm_lag+mt+tlob", "mF1": 0.5194, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:base+tlob", "mF1": 0.5194, "how": "('flat', [1.0, 1.0, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm+tlob", "mF1": 0.5194, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_lag+gbm_rec+mt+mt_st2+tlob", "mF1": 0.5194, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "with_tlob", "stage": "cand", "name": "avg:gbm_lag+mt_st2+tcn+tlob", "mF1": 0.5194, "how": "('flat', [1.0, 1.1, 1.0])"}
+{"pool": "main", "stage": "stack", "name": "stack_lr", "ctx": [], "class_weight": "balanced", "mF1_m1": 0.4773, "mF1": 0.5194, "mult": [1.0, 1.65, 1.025], "sec": 266}
+{"pool": "with_tlob", "stage": "stack", "name": "stack_lr_with_tlob", "ctx": [], "class_weight": "balanced", "mF1_m1": 0.4806, "mF1": 0.5208, "mult": [1.0, 1.65, 1.05], "sec": 305}
+{"pool": "main", "stage": "stack", "name": "stack_lr_uw", "ctx": [], "class_weight": null, "mF1_m1": 0.4289, "mF1": 0.5191, "mult": [1.0, 0.5, 1.075], "sec": 387}
+{"pool": "with_tlob", "stage": "stack", "name": "stack_lr_uw_with_tlob", "ctx": [], "class_weight": null, "mF1_m1": 0.4299, "mF1": 0.5208, "mult": [1.0, 0.5, 1.075], "sec": 430}
+{"pool": "main", "stage": "stack", "name": "stack_lr_ctx", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": "balanced", "mF1_m1": 0.4763, "mF1": 0.519, "mult": [1.0, 1.65, 1.025], "sec": 535}
+{"pool": "with_tlob", "stage": "stack", "name": "stack_lr_ctx_with_tlob", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": "balanced", "mF1_m1": 0.4801, "mF1": 0.5207, "mult": [1.0, 1.65, 1.0], "sec": 588}
+{"pool": "main", "stage": "stack", "name": "stack_lr_ctx_uw", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": null, "mF1_m1": 0.427, "mF1": 0.519, "mult": [1.0, 0.5, 1.05], "sec": 675}
+{"pool": "with_tlob", "stage": "stack", "name": "stack_lr_ctx_uw_with_tlob", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": null, "mF1_m1": 0.4291, "mF1": 0.5207, "mult": [1.0, 0.5, 1.05], "sec": 732}
+{"pool": "main", "stage": "stack", "name": "stack_gbm", "ctx": [], "class_weight": "balanced", "mF1_m1": 0.4744, "mF1": 0.5183, "mult": [1.0, 1.6, 1.025], "sec": 795}
+{"pool": "with_tlob", "stage": "stack", "name": "stack_gbm_with_tlob", "ctx": [], "class_weight": "balanced", "mF1_m1": 0.481, "mF1": 0.5206, "mult": [1.0, 1.6, 1.0], "sec": 842}
+{"pool": "main", "stage": "stack", "name": "stack_gbm_uw", "ctx": [], "class_weight": null, "mF1_m1": 0.4229, "mF1": 0.5181, "mult": [1.0, 0.5, 1.1], "sec": 893}
+{"pool": "with_tlob", "stage": "stack", "name": "stack_gbm_uw_with_tlob", "ctx": [], "class_weight": null, "mF1_m1": 0.4247, "mF1": 0.5207, "mult": [1.0, 0.5, 1.075], "sec": 947}
+{"pool": "main", "stage": "stack", "name": "stack_gbm_ctx", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": "balanced", "mF1_m1": 0.4735, "mF1": 0.5175, "mult": [1.0, 1.65, 1.025], "sec": 1011}
+{"pool": "with_tlob", "stage": "stack", "name": "stack_gbm_ctx_with_tlob", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": "balanced", "mF1_m1": 0.4801, "mF1": 0.5208, "mult": [1.0, 1.65, 1.05], "sec": 1071}
+{"pool": "main", "stage": "stack", "name": "stack_gbm_ctx_uw", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": null, "mF1_m1": 0.4236, "mF1": 0.5178, "mult": [1.0, 0.5, 1.05], "sec": 1122}
+{"pool": "main", "stage": "winner", "name": "stack_lr", "mF1": 0.5194, "method": "stack", "members": ["base", "gbm", "gbm_lag", "gbm_rec", "logreg", "mt", "mt_st2", "tcn"], "mult": [1.0, 1.65, 1.025], "stack_kind": "lr", "ctx": false, "class_weight": "balanced", "r2_winner_mF1": 0.5179}
+{"pool": "with_tlob", "stage": "stack", "name": "stack_gbm_ctx_uw_with_tlob", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": null, "mF1_m1": 0.4245, "mF1": 0.5204, "mult": [1.0, 0.5, 1.025], "sec": 1183}
+{"pool": "with_tlob", "stage": "winner", "name": "stack_gbm_ctx_with_tlob", "mF1": 0.5208, "method": "stack", "members": ["base", "gbm", "gbm_lag", "gbm_rec", "logreg", "mt", "mt_st2", "tcn", "tlob"], "mult": [1.0, 1.65, 1.05], "stack_kind": "gbm", "ctx": true, "class_weight": "balanced", "r2_winner_mF1": 0.5179}
+{"pool": "main", "stage": "half", "chosen_on": [20261006, 20261012, 20261013, 20261014, 20261015, 20261016], "chosen": "cls:gbm_lag+mt+mt_st2", "how": "('cls', [1.0, 1.15, 1.075])", "mF1_other_half": 0.5184, "r2_winner_other_half": 0.5187}
+{"pool": "main", "stage": "half", "chosen_on": [20261019, 20261020, 20261021, 20261022, 20261023, 20261026], "chosen": "cls:gbm_lag+mt+tcn", "how": "('cls', [1.0, 1.05, 1.0])", "mF1_other_half": 0.5173, "r2_winner_other_half": 0.5168}
+{"pool": "main", "stage": "done", "sec": 1269}
+{"pool": "with_tlob", "stage": "half", "chosen_on": [20261006, 20261012, 20261013, 20261014, 20261015, 20261016], "chosen": "cls:mt_st2+tlob", "how": "('cls', [1.0, 1.1, 1.1])", "mF1_other_half": 0.519, "r2_winner_other_half": 0.5187}
+{"pool": "with_tlob", "stage": "half", "chosen_on": [20261019, 20261020, 20261021, 20261022, 20261023, 20261026], "chosen": "cls:gbm_lag+mt+tcn+tlob", "how": "('cls', [1.0, 1.1, 1.025])", "mF1_other_half": 0.5193, "r2_winner_other_half": 0.5168}
+{"pool": "with_tlob", "stage": "done", "sec": 1362}
