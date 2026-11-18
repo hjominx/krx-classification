@@ -174,7 +174,7 @@ def predict(c, Pr, keys):
 
 if __name__ == '__main__':
     t0 = time.time(); P = pool_files(); Pr, keys = load_pool(P); y = Pr.pop('y'); d = keys // 1_000_000; names = sorted(Pr)
-    log(dict(stage='info', n_rows=int(len(y)), n_days=int(len(np.unique(d))), pool={n: len(f) for n, f in P.items()}))
+    log(dict(stage='info', n_rows=int(len(y)), n_days=int(len(np.unique(d))), n_files={n: len(f) for n, f in P.items()}))
     ref = r2_winner(Pr, keys); log(dict(stage='r2_winner', mF1=round(mf1(y, apply(ref, [1, 1.1, 1])), 4)))
     for n in names: f, mm = best_flat(Pr[n], y); log(dict(stage='member', name=n, n_seeds=len(P[n]), mF1_m1=round(mf1(y, Pr[n].argmax(1)), 4), mF1=round(f, 4), m=mm[1]))
     cand = select(Pr, y, keys, d, None, names, None)
