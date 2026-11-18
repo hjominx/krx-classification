@@ -1,0 +1,21 @@
+{"pool": "with_tlob", "stage": "info", "n_rows": 1064299, "n_days": 12, "n_files": {"gbm": 1, "logreg": 1, "base": 10, "mt": 10, "tcn": 10, "mt_st2": 10, "tlob": 3, "gbm_lag": 1, "gbm_rec": 1}}
+{"pool": "main", "stage": "info", "n_rows": 1064734, "n_days": 12, "n_files": {"gbm": 1, "logreg": 1, "base": 10, "mt": 10, "tcn": 10, "mt_st2": 10, "gbm_lag": 1, "gbm_rec": 1}}
+{"pool": "with_tlob", "stage": "r2_winner", "mF1": 0.5179}
+{"pool": "with_tlob", "stage": "member", "name": "base", "n_seeds": 10, "mF1_m1": 0.5159, "mF1": 0.516, "m": 1.1}
+{"pool": "with_tlob", "stage": "member", "name": "gbm", "n_seeds": 1, "mF1_m1": 0.5119, "mF1": 0.5149, "m": 1.2}
+{"pool": "main", "stage": "r2_winner", "mF1": 0.5179}
+{"pool": "with_tlob", "stage": "member", "name": "gbm_lag", "n_seeds": 1, "mF1_m1": 0.5125, "mF1": 0.5151, "m": 1.1}
+{"pool": "main", "stage": "member", "name": "base", "n_seeds": 10, "mF1_m1": 0.5159, "mF1": 0.516, "m": 1.1}
+{"pool": "with_tlob", "stage": "member", "name": "gbm_rec", "n_seeds": 1, "mF1_m1": 0.511, "mF1": 0.5152, "m": 1.2}
+{"pool": "main", "stage": "member", "name": "gbm", "n_seeds": 1, "mF1_m1": 0.5119, "mF1": 0.5149, "m": 1.2}
+{"pool": "with_tlob", "stage": "member", "name": "logreg", "n_seeds": 1, "mF1_m1": 0.5078, "mF1": 0.5078, "m": 1.0}
+{"pool": "main", "stage": "member", "name": "gbm_lag", "n_seeds": 1, "mF1_m1": 0.5125, "mF1": 0.5151, "m": 1.1}
+{"pool": "with_tlob", "stage": "member", "name": "mt", "n_seeds": 10, "mF1_m1": 0.5164, "mF1": 0.5175, "m": 1.1}
+{"pool": "main", "stage": "member", "name": "gbm_rec", "n_seeds": 1, "mF1_m1": 0.511, "mF1": 0.5153, "m": 1.2}
+{"pool": "with_tlob", "stage": "member", "name": "mt_st2", "n_seeds": 10, "mF1_m1": 0.5157, "mF1": 0.5171, "m": 1.1}
+{"pool": "main", "stage": "member", "name": "logreg", "n_seeds": 1, "mF1_m1": 0.5078, "mF1": 0.5078, "m": 1.0}
+{"pool": "with_tlob", "stage": "member", "name": "tcn", "n_seeds": 10, "mF1_m1": 0.5162, "mF1": 0.5166, "m": 1.1}
+{"pool": "main", "stage": "member", "name": "mt", "n_seeds": 10, "mF1_m1": 0.5164, "mF1": 0.5176, "m": 1.1}
+{"pool": "with_tlob", "stage": "member", "name": "tlob", "n_seeds": 3, "mF1_m1": 0.5183, "mF1": 0.5183, "m": 1.1}
+{"pool": "main", "stage": "member", "name": "mt_st2", "n_seeds": 10, "mF1_m1": 0.5158, "mF1": 0.5171, "m": 1.1}
+{"pool": "main", "stage": "member", "name": "tcn", "n_seeds": 10, "mF1_m1": 0.5162, "mF1": 0.5167, "m": 1.1}
