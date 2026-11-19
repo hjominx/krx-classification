@@ -1,0 +1,2 @@
+{"stage": "info", "n_rows": 1062287, "n_days": 12, "class_shares": [0.4005, 0.4441, 0.1554]}
+{"stage": "r2_winner", "thr": [2.0, 2.85], "mF1": 0.6412}
