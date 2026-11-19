@@ -5,6 +5,8 @@
 - **방향 분류:** 5초 뒤 중간가가 상승 / 보합 / 하락 중 무엇일지
 - **변동성 분류:** 다음 60초 동안 가격이 잔잔 / 보통 / 격렬 중 어떻게 움직일지
 
+변동성 분류의 정답을 만드는 방법과 클래스 경계, 결과는 [`VOLATILITY.md`](VOLATILITY.md)에 정리했음.
+
 ## 데이터
 
 | 항목 | 값 |
@@ -92,6 +94,7 @@ figures/      발표용 그림
 RESULTS.md    전체 결과 정리
 LOB_MODELS.md MLPLOB·TLOB와 conv+GRU 비교
 ROUND3.md     Round 3: 시드 추가, 학습 변형, stacking (방향·변동성)
+VOLATILITY.md 변동성 분류(60초): 정답 정의, 클래스 경계, 결과
 run_all.sh    전체 파이프라인 실행 순서
 ```
 
