@@ -58,7 +58,7 @@
 - 모델이 확신할 때만 답하면 다음 가격 변화 방향을 상위 약 4%에서 0.87 적중했습니다.
 - 수수료·세금·스프레드를 넣은 백테스트는 모든 전략이 손실이었습니다.
 
-전체 결과와 부록 실험은 [`RESULTS.md`](RESULTS.md)에, MLPLOB·TLOB 비교는 [`LOB_MODELS.md`](LOB_MODELS.md)에, Round 3 성능 개선 시도(테스트 0.5185, Round 2 대비 +0.0014)는 [`ROUND3.md`](ROUND3.md)에, 발표 자료·결과 표·그래프 목록은 [`report/`](report/README.md)에 정리했습니다.
+전체 결과와 부록 실험은 [`RESULTS.md`](RESULTS.md)에, MLPLOB·TLOB 비교는 [`LOB_MODELS.md`](LOB_MODELS.md)에, Round 3 성능 개선 시도(방향 테스트 0.5185, Round 2 대비 +0.0014; 변동성 stacking 0.6630, 유의하지 않음)는 [`ROUND3.md`](ROUND3.md)에, 발표 자료·결과 표·그래프 목록은 [`report/`](report/README.md)에 정리했습니다.
 
 <p align="center">
   <img src="figures/18_vol_confusion.png" width="420">
@@ -90,7 +90,7 @@ report/       발표 자료, 결과 표(CSV), 결과물 설명
 figures/      발표용 그림
 RESULTS.md    전체 결과 정리
 LOB_MODELS.md MLPLOB·TLOB와 conv+GRU 비교
-ROUND3.md     Round 3: 시드 추가, 학습 변형, stacking
+ROUND3.md     Round 3: 시드 추가, 학습 변형, stacking (방향·변동성)
 run_all.sh    전체 파이프라인 실행 순서
 ```
 
