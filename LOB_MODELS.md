@@ -1,7 +1,7 @@
 # MLPLOB · TLOB vs conv+GRU: 5초 방향 분류 비교
 
-모든 숫자는 `results/lob_models.jsonl`, `results/v2_deep.jsonl`, `results/raw_cmp.jsonl`에서 그대로 옮겼습니다.
-연산량과 예측 시간은 같은 코드로 따로 측정한 값입니다(아래 4절).
+모든 숫자는 `results/lob_models.jsonl`, `results/v2_deep.jsonl`, `results/raw_cmp.jsonl`, `results/lob_cost.jsonl`에서 그대로 옮겼습니다.
+연산량과 예측 시간은 `src/lob_cost.py`로 측정했습니다(아래 4절). 그림과 표는 8절에 있습니다.
 코드는 `src/lob_models.py`이고, 모델은 논문 *TLOB: A Novel Transformer Model with Dual Attention for Price Trend Prediction
 with Limit Order Book Data*(Berti & Kasneci, arXiv:2502.15757)의 설명을 보고 다시 구현했습니다.
 
@@ -64,16 +64,17 @@ with Limit Order Book Data*(Berti & Kasneci, arXiv:2502.15757)의 설명을 보�
 
 ## 4. 비용
 
-| 모델 | 파라미터 | 연산량 (창 1개, 곱셈-덧셈) | conv+GRU 대비 | 256개 예측 시간 | 학습 1회 |
-|---|---|---|---|---|---|
-| conv+GRU (50스냅샷) | 61,955 | 310만 | 1배 | 16ms | 5~8분 |
-| MLPLOB (50스냅샷) | 391,985 | 940만 | 3배 | 57ms | 28분 |
-| TLOB (50스냅샷) | 553,823 | 2,110만 | 7배 | 126ms | 1.7시간 |
-| MLPLOB (128스냅샷) | 1,046,483 | 3,950만 | 13배 | 269ms | 48분 |
-| TLOB (128스냅샷) | 1,543,955 | 8,980만 | 29배 | 578ms | 3.4~5.3시간 |
+| 모델 | 파라미터 | 연산량 (창 1개, 곱셈-덧셈) | conv+GRU 대비 | 창 256개 예측 | 창 1개 예측 | 학습 1회 |
+|---|---|---|---|---|---|---|
+| conv+GRU (50스냅샷) | 61,955 | 306만 | 1배 | 12.5ms | 0.79ms | 5~8분 |
+| MLPLOB (50스냅샷) | 391,985 | 943만 | 3.1배 | 53.7ms | 0.77ms | 28분 |
+| TLOB (50스냅샷) | 553,823 | 2,111만 | 6.9배 | 105.7ms | 1.85ms | 1.7시간 |
+| MLPLOB (128스냅샷) | 1,046,483 | 3,946만 | 12.9배 | 238.6ms | 1.37ms | 48분 |
+| TLOB (128스냅샷) | 1,543,955 | 8,979만 | 29.3배 | 456.8ms | 3.23ms | 3.4~5.3시간 |
 
-- 모든 학습과 측정은 CPU 2스레드에서 했습니다.
-- 연산량은 `torch.utils.flop_counter`로 셌고, GRU는 직접 계산했습니다(3 게이트 × (입력·은닉 + 은닉·은닉) × 시점 수).
+- 모든 학습과 측정은 CPU 2스레드에서 했습니다. 예측 시간은 측정할 때마다 조금씩 달라집니다(이전에 따로 잰 값은 TLOB 128스냅샷 256개에 578ms였습니다).
+- 연산량은 `torch.utils.flop_counter`로 셌고, conv+GRU는 손으로 계산한 값(합성곱 2층 + GRU 3 게이트 × (입력·은닉 + 은닉·은닉) × 시점 수 + 출력층)과 같은지 확인했습니다.
+- 창을 1개씩 예측해도 모두 4ms 이하라서, 초당 약 4.5개 스냅샷을 처리하는 데는 어느 모델도 문제가 없습니다. 차이는 학습 시간과 묶음 예측(재학습·백테스트)에서 크게 납니다.
 - MLPLOB·TLOB 전체 학습 시간 합계는 약 18.7시간, 테스트셋 평가는 약 2.4시간이었습니다.
 
 ## 5. 연산 방식의 차이
@@ -109,6 +110,9 @@ python lob_models.py S        # 6개 구성, 시드 0 (검증셋)
 python lob_models.py M        # 검증셋 최고 'full' 구성의 시드 1, 2
 python lob_models.py bagval   # 시드 3개 평균 vs conv+GRU, 검증셋
 python lob_models.py test     # 테스트셋 1회
+python lob_cost.py            # 파라미터·연산량·예측 시간 -> results/lob_cost.jsonl
+python make_tables.py         # report/tables/12~14_lob_models_*.csv (다른 표도 함께 다시 만듦)
+python plot_lob.py            # figures/20~23_lob_*.png
 ```
 
 ```bash
@@ -117,3 +121,25 @@ python run_lob_gpu.py <원시 .jsonl.gz 폴더>   # GPU 노트북에서 데이�
 
 - 각 단계는 이미 끝난 작업을 건너뛰고, 학습은 epoch마다 저장한 지점부터 이어서 합니다.
 - 결과는 `results/lob_models.jsonl`(GPU 실행은 `results_gpu/`)에 쌓입니다.
+
+## 8. 그림과 표
+
+![검증셋: 입력별 비교](figures/20_lob_val.png)
+
+![검증셋과 테스트셋: 시드별 값과 시드 3개 평균](figures/21_lob_val_test.png)
+
+![비용 대비 검증 성능](figures/22_lob_cost.png)
+
+![epoch별 검증 성능](figures/23_lob_val_curves.png)
+
+| 파일 | 내용 |
+|---|---|
+| `figures/20_lob_val.png` | 입력(원시 호가 40개 / 피처 127개)과 스냅샷 길이별 검증 macro-F1 |
+| `figures/21_lob_val_test.png` | conv+GRU와 TLOB의 시드별 값, 시드 3개 평균, 두 모델 합침 (검증 / 테스트) |
+| `figures/22_lob_cost.png` | 연산량·학습 시간 대비 검증 macro-F1 |
+| `figures/23_lob_val_curves.png` | 시드 0의 epoch별 검증 macro-F1 |
+| `report/tables/12_lob_models_val.csv` | 모든 학습 실행(구성·시드별)의 설정, 최적 epoch, 검증 성능, 학습 시간 |
+| `report/tables/13_lob_models_val_test.csv` | 시드별·평균 검증/테스트 macro-F1과 부트스트랩 구간 |
+| `report/tables/14_lob_models_cost.csv` | 파라미터, 연산량, 예측 시간, 학습 시간 |
+
+- 학습한 가중치(`results/lob_*.pt`)와 예측 확률(`results/lob_*.npz`)은 데이터에서 만든 파일이라 저장소에 올리지 않았습니다.

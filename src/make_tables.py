@@ -87,3 +87,28 @@ for side in ('long_only', 'long_short'):
     for sc in ('mid_no_cost', 'spread_only', 'passive_upper_bound', 'realistic'):
         rows.append([side, sc, s['trades'], s['signal_correct'], s[sc]['per_trade_krw'], s[sc]['total_krw'], s[sc]['win_rate']])
 write('11_backtest_test.csv', ['side', 'cost_scenario', 'trades', 'signal_correct', 'pnl_per_trade_krw', 'pnl_total_krw', 'win_rate'], rows)
+
+# 10. MLPLOB / TLOB vs conv+GRU (lob_models.py, LOB_MODELS.md)
+lob = rd('lob_models.jsonl'); base = [r for r in rd('v2_deep.jsonl') if r.get('name') == 'base' and r.get('seed') is not None]
+inp = {'raw': '40 raw book columns', 'full': '127 features'}
+rows = [['conv+GRU', inp['raw'], 50, 40, 0, rc['gru_curve']['n_params'], '', '', '', '', rc['val']['gru_raw']['mF1'], rc['val']['gru_raw']['acc'], '']]
+rows += [['conv+GRU', inp['full'], 50, r['n_features'], r['seed'], r['n_params'], 0.001, '', r['best_epoch'] + 1, r['best_weights'], r['val_mF1'], r['val_acc'],
+          round(r['sec'] / 60, 1)] for r in base]
+rows += [[r['arch'].upper(), inp[r['cols']], r['T'], r['n_features'], r['seed'], r['n_params'], r['lr'], r['layers'], r['best_epoch'] + 1, r['best_weights'],
+          r['val_mF1'], r['val_acc'], r['curve'][-1]['min']] for r in lob if r.get('stage') in ('S', 'M')]
+write('12_lob_models_val.csv', ['model', 'input', 'snapshots', 'n_features', 'seed', 'n_params', 'learning_rate', 'layers', 'best_epoch (1 = first)', 'best_weights',
+                                'val_macro_F1', 'val_accuracy', 'train_minutes'], rows)
+bv = [r for r in lob if r.get('stage') == 'bagval'][-1]; te = [r for r in lob if r.get('stage') == 'test'][-1]
+vs = {r['seed']: r['val_mF1'] for r in base}
+rows = [['conv+GRU (127 features, 50 snapshots)', f'seed {s}', vs[s], t] for s, t in zip(te['seeds'], te['convgru_seed_mF1'])]
+rows += [['conv+GRU (127 features, 50 snapshots)', 'mean of 3 seeds', bv['convgru_bag_mF1'], te['convgru_bag_mF1']]]
+rows += [['TLOB (127 features, 128 snapshots)', f'seed {s}', v, t] for s, v, t in zip(te['seeds'], bv['seed_mF1'], te['seed_mF1'])]
+rows += [['TLOB (127 features, 128 snapshots)', 'mean of 3 seeds', bv['bag_mF1'], te['mF1']], ['conv+GRU and TLOB averaged', 'mean of 6', bv['both_mF1'], te['both_mF1']]]
+b = te['boot_vs_convgru']
+rows += [['TLOB - conv+GRU (means of 3 seeds), day-block bootstrap', 'mean / 95% CI', '', f"{b['mean']} [{b['ci95'][0]}, {b['ci95'][1]}]"]]
+write('13_lob_models_val_test.csv', ['model', 'seeds', f"val_macro_F1 (single seeds: own VAL rows; means: the same {bv['n']} rows)", f"test_macro_F1 (same {te['n']} rows)"], rows)
+cost = rd('lob_cost.jsonl')
+write('14_lob_models_cost.csv', ['model', 'snapshots', 'n_params', 'multiply_adds_per_window', 'x_conv+GRU', 'ms_per_256_windows_2_threads', 'ms_per_window_2_threads',
+                                 'train_minutes_seed0'],
+      [[r['name'].split('_')[0].replace('convgru', 'conv+GRU').upper().replace('CONV+GRU', 'conv+GRU'), r['T'], r['n_params'], r['macs'], r['macs_vs_convgru'],
+        r['ms_per_256'], r['ms_per_1'], r['train_min']] for r in cost])

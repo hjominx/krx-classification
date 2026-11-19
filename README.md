@@ -85,6 +85,7 @@ src/          피처 생성, 모델 학습·평가, 그림
   backtest.py, swing.py  비용을 넣은 백테스트
   plots.py ...        결과 파일에서 그림 생성
   make_tables.py      결과 파일에서 요약 표(CSV) 생성
+  lob_models.py       MLPLOB·TLOB 학습·비교 (lob_cost.py: 비용 측정, plot_lob.py: 그림)
 results/      실험 결과 (JSON Lines)
 report/       발표 자료, 결과 표(CSV), 결과물 설명
 figures/      발표용 그림

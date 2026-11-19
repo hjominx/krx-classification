@@ -1,0 +1,6 @@
+﻿model,snapshots,n_params,multiply_adds_per_window,x_conv+GRU,ms_per_256_windows_2_threads,ms_per_window_2_threads,train_minutes_seed0
+conv+GRU,50,61955,3062592,1.0,12.5,0.79,5.3
+MLPLOB,50,391985,9434176,3.1,53.7,0.77,27.8
+MLPLOB,128,1046483,39461056,12.9,238.6,1.37,47.8
+TLOB,50,553823,21107776,6.9,105.7,1.85,99.3
+TLOB,128,1543955,89792704,29.3,456.8,3.23,291.4
