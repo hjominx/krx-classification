@@ -41,6 +41,7 @@ if __name__ == '__main__':
     step('1. GPU check')
     import torch
     if torch.cuda.is_available(): print('  GPU:', torch.cuda.get_device_name(0))
+    elif torch.backends.mps.is_available(): print('  GPU: Apple MPS (Metal)')
     else: print('  WARNING: PyTorch does not see a GPU - the run will use the CPU and be slow.\n'
                 '  Install the CUDA build of PyTorch (https://pytorch.org/get-started/locally/) and run again.')
 
