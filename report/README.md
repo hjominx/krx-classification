@@ -1,6 +1,6 @@
 # 결과물 모음
 
-발표 자료, 결과 표, 그래프를 한곳에 모았습니다. 표와 그래프의 숫자는 모두 `results/`의 실험 결과 파일에서 코드로 만든 것입니다(손으로 입력한 숫자 없음). 원본 데이터는 포함되어 있지 않습니다.
+발표 자료, 결과 표, 그래프를 한곳에 모았음. 표와 그래프의 숫자는 모두 `results/`의 실험 결과 파일에서 코드로 만든 것임(손으로 입력한 숫자 없음). 원본 데이터는 포함되어 있지 않음.
 
 ## 1. 발표 자료 (`presentation/`)
 
@@ -13,7 +13,7 @@
 
 ## 2. 결과 표 (`tables/`)
 
-`src/make_tables.py`가 `results/*.jsonl`에서 만든 CSV입니다. 엑셀에서 바로 열 수 있습니다(UTF-8 BOM).
+`src/make_tables.py`가 `results/*.jsonl`에서 만든 CSV임. 엑셀에서 바로 열 수 있음(UTF-8 BOM).
 
 | 파일 | 내용 | 데이터 구간 |
 |---|---|---|
@@ -91,4 +91,4 @@ python lob_cost.py     # results/lob_cost.jsonl (예측 시간은 측정할 때�
 python plot_lob.py     # figures/20~23_lob_*.png
 ```
 
-MLPLOB·TLOB 비교의 자세한 설명은 [`../LOB_MODELS.md`](../LOB_MODELS.md)에 있습니다.
+MLPLOB·TLOB 비교의 자세한 설명은 [`../LOB_MODELS.md`](../LOB_MODELS.md)에 있음.
