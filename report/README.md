@@ -31,6 +31,7 @@
 | `12_lob_models_val.csv` | MLPLOB·TLOB·conv+GRU의 모든 학습 실행(입력, 스냅샷 길이, 시드별): 설정, 최적 epoch, 성능, 학습 시간 | 검증 |
 | `13_lob_models_val_test.csv` | conv+GRU와 TLOB의 시드별·시드 3개 평균 macro-F1, 차이의 날짜 단위 bootstrap 95% 구간 | 검증·테스트 |
 | `14_lob_models_cost.csv` | 모델별 파라미터, 연산량(곱셈-덧셈), 예측 시간, 학습 시간 | — |
+| `15_two_tasks_summary.csv` | 방향 분류(5초)와 변동성 분류(60초)의 모든 단계·방법별 검증/테스트 macro-F1 비교 | 검증·테스트 |
 
 ### 주요 결과
 

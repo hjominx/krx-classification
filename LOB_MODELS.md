@@ -1,5 +1,7 @@
 # MLPLOB · TLOB vs conv+GRU: 5초 방향 분류 비교
 
+이 문서는 **방향 분류(5초 뒤 상승 / 보합 / 하락)만** 다룸. MLPLOB·TLOB는 변동성 분류에는 돌리지 않았음. 두 과제의 전체 비교는 [`README.md`](README.md)의 "두 과제 전체 비교"에 있음.
+
 모든 숫자는 `results/lob_models.jsonl`, `results/v2_deep.jsonl`, `results/raw_cmp.jsonl`, `results/lob_cost.jsonl`에서 그대로 옮겼음.
 GPU 재실행 결과(9절)는 `results_gpu/lob_models.jsonl`, `results_gpu/v2_deep.jsonl`에서 옮겼음.
 연산량과 예측 시간은 `src/lob_cost.py`로 측정했음(아래 4절). 그림과 표는 8절에 있음.
