@@ -1,0 +1,6 @@
+﻿model,snapshots,cpu_threads,cpu_ms_per_train_step_256,mps_ms_per_train_step_256,train_speedup,cpu_ms_forward_256,mps_ms_forward_256,forward_speedup,cpu_min_per_epoch_train_only,mps_min_per_epoch_train_only,power,lid
+conv+GRU,50,2,134.9,19.8,6.8,103.0,8.1,12.6,1.8,0.3,Battery Power,open
+MLPLOB,50,2,151.8,21.1,7.2,47.2,7.4,6.4,2.0,0.3,Battery Power,open
+MLPLOB,128,2,342.1,36.4,9.4,108.2,15.4,7.0,4.5,0.5,Battery Power,open
+TLOB,50,2,362.2,51.0,7.1,92.7,16.6,5.6,4.7,0.7,Battery Power,open
+TLOB,128,2,909.4,86.1,10.6,229.4,31.0,7.4,11.9,1.1,Battery Power,open

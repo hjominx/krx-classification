@@ -3,7 +3,7 @@
 이 문서는 **방향 분류(5초 뒤 상승 / 보합 / 하락)만** 다룸. MLPLOB·TLOB는 변동성 분류에는 돌리지 않았음. 두 과제의 전체 비교는 [`README.md`](README.md)의 "두 과제 전체 비교"에 있음.
 
 모든 숫자는 `results/lob_models.jsonl`, `results/v2_deep.jsonl`, `results/raw_cmp.jsonl`, `results/lob_cost.jsonl`에서 그대로 옮겼음.
-GPU 재실행 결과(9절)는 `results_gpu/lob_models.jsonl`, `results_gpu/v2_deep.jsonl`에서 옮겼음.
+GPU 재실행 결과(9절)는 `results_gpu/lob_models.jsonl`, `results_gpu/v2_deep.jsonl`에서 옮겼음. CPU 실행과의 추가 비교(9.4~9.6절)는 `src/cpu_gpu.py`가 만든 `results/cpu_gpu.jsonl`에서 옮겼음.
 연산량과 예측 시간은 `src/lob_cost.py`로 측정했음(아래 4절). 그림과 표는 8절에 있음.
 코드는 `src/lob_models.py`이고, 모델은 논문 *TLOB: A Novel Transformer Model with Dual Attention for Price Trend Prediction
 with Limit Order Book Data*(Berti & Kasneci, arXiv:2502.15757)의 설명을 보고 다시 구현했음.
@@ -163,7 +163,7 @@ python run_lob_gpu.py <원시 .jsonl.gz 폴더>   # GPU 노트북에서 데이�
 | **TLOB, 127개 피처, 128스냅샷** | **0.5145** | **0.5133** | −0.0012 |
 
 - GPU에서도 `full` 구성 중 검증 최고는 TLOB 128스냅샷이라, 같은 구성으로 시드 1, 2를 추가했음(GPU 0.5124 / 0.5134, CPU 0.5124 / 0.5131).
-- GPU와 CPU는 계산 순서가 달라 같은 시드라도 값이 조금씩 다름(−0.0012~+0.0024). 가장 큰 차이는 MLPLOB 128스냅샷으로, 최적 epoch도 CPU 2번째, GPU 10번째로 달랐음.
+- GPU와 CPU는 dropout 난수와 계산 순서가 달라 같은 시드라도 값이 조금씩 다름(−0.0012~+0.0024, 9.5절). 가장 큰 차이는 MLPLOB 128스냅샷으로, 최적 epoch도 CPU 2번째, GPU 10번째로 달랐음.
 - conv+GRU 시드 0~2의 검증 값은 CPU 실행(`results/v2_deep.jsonl`)과 정확히 같았음(0.5132 / 0.5107 / 0.5103).
 
 ### 9.2 시드 3개 평균 예측
@@ -191,5 +191,88 @@ python run_lob_gpu.py <원시 .jsonl.gz 폴더>   # GPU 노트북에서 데이�
 | TLOB, 127개 피처, 128스냅샷 (시드 0 / 1 / 2) | 32.7 / 34.1 / 32.2 | 7.7 / 1.9 / 1.8 |
 
 - TLOB 128스냅샷은 GPU에서 epoch당 약 4~18배 빨랐음.
-- 같은 구성인데도 GPU 실행끼리 epoch당 시간이 크게 달랐음(TLOB 128스냅샷 시드 0은 7.7분, 시드 1·2는 1.8~1.9분). 결과 파일에는 원인이 남아 있지 않음. 노트북에서 동시에 돌던 다른 작업 등의 영향으로 추정함. 시간 비교는 참고용임.
+- 같은 구성인데도 GPU 실행끼리 epoch당 시간이 크게 달랐음(TLOB 128스냅샷 시드 0은 7.7분, 시드 1·2는 1.8~1.9분). 원인은 노트북 상태였음. TLOB 128스냅샷 시드 0의 첫 epoch까지는 덮개를 닫고 배터리로 돌려 성능이 크게 떨어졌었음(같은 짧은 CPU 측정이 약 6배 느려졌음). 그 뒤로는 덮개를 열고 전원을 연결했음. 그래서 MLPLOB·TLOB 50스냅샷과 TLOB 128스냅샷 시드 0의 GPU 시간에는 느려진 구간이 섞여 있고, MLPLOB 128스냅샷과 TLOB 128스냅샷 시드 1·2만 정상 상태 값임. 같은 조건에서 잰 속도는 9.6절에 있음.
 - 학습을 중단했다가 이어서 한 경우에도 epoch당 시간은 실제로 학습한 시간만 더해서 계산함.
+
+### 9.4 학습 경로와 테스트 세부 비교
+| 구성 | 시드 | 최적 epoch (CPU / GPU) | 학습한 epoch (CPU / GPU) |
+|---|---|---|---|
+| MLPLOB, 원시 호가 40개, 50스냅샷 | 0 | 5 / 10 | 8 / 12 |
+| TLOB, 원시 호가 40개, 50스냅샷 | 0 | 9 / 10 | 12 / 12 |
+| MLPLOB, 127개 피처, 50스냅샷 | 0 | 5 / 5 | 8 / 8 |
+| TLOB, 127개 피처, 50스냅샷 | 0 | 8 / 12 | 11 / 12 |
+| MLPLOB, 127개 피처, 128스냅샷 | 0 | 2 / 10 | 5 / 12 |
+| TLOB, 127개 피처, 128스냅샷 | 0 / 1 / 2 | 7 / 7, 4 / 4, 8 / 8 | 10 / 10, 7 / 7, 11 / 11 |
+| conv+GRU, 127개 피처, 50스냅샷 (두 실행 모두 CPU) | 0 / 1 / 2 | 3 / 3, 6 / 6, 4 / 4 | 6 / 6, 9 / 9, 7 / 7 |
+
+- epoch는 1부터 셌음.
+- `full` 구성 4개의 검증 순위는 1·2위(TLOB 128스냅샷, MLPLOB 50스냅샷)가 같았고 3·4위만 바뀌었음. 3·4위는 차이가 0.002 안쪽이라 순위가 쉽게 바뀌는 구간임.
+- MLPLOB 128스냅샷은 CPU 실행에서 2번째 epoch가 최고였고 그 뒤 3 epoch 동안 개선이 없어 5 epoch에서 멈췄음. GPU 실행은 12 epoch까지 조금씩 올랐음(그림 25). 차이 +0.0024는 조기 종료 시점이 달라진 영향임.
+- TLOB 128스냅샷 시드 0~2는 최적 epoch가 두 실행에서 모두 같았음.
+- conv+GRU는 두 실행 모두 CPU에서 학습해서 최종 결과와 최적 epoch가 같았음. 최적 epoch 이후 몇 epoch에서만 넷째 자리가 달랐음(최대 0.0013).
+- 테스트셋 TLOB(시드 3개 평균)의 클래스별 재현율은 하락 0.545 / 0.546, 보합 0.562 / 0.564, 상승 0.506 / 0.502(CPU / GPU)로 차이가 0.004 이하였음.
+- 테스트 날짜 10일의 날짜별 macro-F1 차이는 최대 0.0023이었음.
+- conv+GRU 테스트 값이 거의 같은 것은 가중치를 두 실행 모두 CPU에서 학습했고 GPU 실행은 예측만 GPU로 했기 때문임. 시드 2만 넷째 자리가 달랐음(0.5074 / 0.5073).
+
+### 9.5 같은 가중치, 다른 장치
+GPU 실행의 가중치 11개(MLPLOB·TLOB 8개, conv+GRU 3개)로 검증셋 창의 1/10(106,430개)을 CPU와 GPU에서 각각 예측했음.
+CPU 실행의 가중치는 이 노트북에 없어서 GPU 실행의 가중치만 썼음.
+
+- 확률 차이는 conv+GRU 최대 3.6×10⁻⁷, MLPLOB·TLOB 최대 1.3×10⁻³(평균 2×10⁻⁵ 이하)였음.
+- 예측 클래스가 바뀐 창은 가중치마다 0~7개(106,430개 중)였고, 11개 모두 macro-F1이 넷째 자리까지 같았음.
+- 그래서 두 실행의 차이는 예측이 아니라 학습에서 생겼음.
+  - 같은 것: 초기 가중치(CPU에서 만든 뒤 옮김), 학습 창 추출(numpy 난수), 학습 규칙.
+  - 다른 것: dropout 난수(장치마다 따로 만들어짐)와 부동소수점 계산 순서.
+  - 이 차이로 첫 epoch부터 학습 경로가 갈라졌음(그림 25).
+
+### 9.6 속도 (같은 노트북, 같은 조건)
+`cpu_gpu.py speed`로 Apple M1 Max 한 대에서 학습 1 step(batch 256)과 창 256개 예측 시간을 쟀음.
+- 학습 1 step은 학습 스크립트와 같은 순서임: 순전파·역전파·Adam, MLPLOB·TLOB는 기울기 자르기와 EMA까지.
+- CPU는 CPU 실행과 같은 2스레드로 맞췄음. 측정 때 배터리 전원, 덮개 열림 상태였음.
+
+| 모델 | 학습 1 step: CPU | GPU | 배수 | 예측 256개: CPU | GPU | 배수 |
+|---|---|---|---|---|---|---|
+| conv+GRU, 50스냅샷 | 134.9ms | 19.8ms | 6.8배 | 103.0ms | 8.1ms | 12.6배 |
+| MLPLOB, 50스냅샷 | 151.8ms | 21.1ms | 7.2배 | 47.2ms | 7.4ms | 6.4배 |
+| MLPLOB, 128스냅샷 | 342.1ms | 36.4ms | 9.4배 | 108.2ms | 15.4ms | 7.0배 |
+| TLOB, 50스냅샷 | 362.2ms | 51.0ms | 7.1배 | 92.7ms | 16.6ms | 5.6배 |
+| TLOB, 128스냅샷 | 909.4ms | 86.1ms | 10.6배 | 229.4ms | 31.0ms | 7.4배 |
+
+- GPU가 학습 7~11배, 예측 6~13배 빨랐음. 큰 모델일수록 학습 배수가 컸음.
+- 학습 1 step 시간으로 환산한 epoch당 학습 시간(창 200,000개, 검증 평가 제외)은 TLOB 128스냅샷이 CPU 11.9분, GPU 1.1분임.
+- 4절 표와는 측정 환경이 달라 CPU 값이 다름(특히 conv+GRU 예측). 이 표는 같은 노트북에서 CPU와 GPU를 비교하는 용도임.
+
+### 9.7 한계
+- CPU 실행의 가중치와 예측 확률 파일은 저장소에 없어서 두 실행의 예측을 행 단위로 맞대어 보지는 못했음. 대신 혼동행렬, 클래스별 재현율, 날짜별 macro-F1을 비교했음.
+- 구성마다 CPU·GPU 실행이 한 쌍씩이라, 장치 때문인 차이와 시드 때문인 차이를 따로 떼어 보지는 못했음.
+
+### 9.8 재현
+
+```bash
+python run_lob_gpu.py <원시 .jsonl.gz 폴더>   # GPU 실행 -> results_gpu/
+cd src
+python cpu_gpu.py records   # 두 실행의 결과 기록 비교
+python cpu_gpu.py same      # 같은 가중치로 CPU / GPU 예측 비교 (GPU 실행의 가중치와 데이터 필요)
+python cpu_gpu.py speed     # 같은 노트북에서 학습·예측 시간 (Apple GPU 필요)
+python make_tables.py       # report/tables/16~19_cpu_gpu_*.csv (다른 표도 함께 다시 만듦)
+python plot_cpu_gpu.py      # figures/24~26_cpu_gpu_*.png
+```
+
+### 9.9 그림과 표
+
+![CPU 실행과 GPU 실행: 학습 실행별, 시드 3개 평균](figures/24_cpu_gpu_val_test.png)
+
+![epoch별 검증 성능: CPU 실행과 GPU 실행](figures/25_cpu_gpu_curves.png)
+
+![같은 노트북에서 CPU와 GPU 속도](figures/26_cpu_gpu_speed.png)
+
+| 파일 | 내용 |
+|---|---|
+| `figures/24_cpu_gpu_val_test.png` | 학습 실행별 검증 macro-F1, 시드 3개 평균의 검증·테스트 macro-F1 (CPU 실행 / GPU 실행) |
+| `figures/25_cpu_gpu_curves.png` | 6개 구성(시드 0)의 epoch별 검증 macro-F1과 저장된 epoch (CPU 실행 / GPU 실행) |
+| `figures/26_cpu_gpu_speed.png` | 같은 노트북에서 학습 1 step, 예측 256개 시간과 배수 |
+| `report/tables/16_cpu_gpu_runs.csv` | 학습 실행별 검증 macro-F1·정확도, 최적 epoch, 학습한 epoch 수, epoch 곡선 차이, epoch당 시간 |
+| `report/tables/17_cpu_gpu_val_test.csv` | 고른 구성, 시드별·평균 검증/테스트 macro-F1, 부트스트랩 구간, 클래스별 재현율·예측 비율, 날짜별 최대 차이 |
+| `report/tables/18_cpu_gpu_same_weights.csv` | 같은 가중치로 CPU / GPU 예측할 때 확률 차이, 바뀐 예측 수, macro-F1 |
+| `report/tables/19_cpu_gpu_speed.csv` | 학습 1 step, 예측 256개 시간(CPU 2스레드 / GPU)과 배수 |
+| `results/cpu_gpu.jsonl` | 위 표와 그림의 비교 숫자 |
