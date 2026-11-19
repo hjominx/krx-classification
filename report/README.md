@@ -32,6 +32,10 @@
 | `13_lob_models_val_test.csv` | conv+GRU와 TLOB의 시드별·시드 3개 평균 macro-F1, 차이의 날짜 단위 bootstrap 95% 구간 | 검증·테스트 |
 | `14_lob_models_cost.csv` | 모델별 파라미터, 연산량(곱셈-덧셈), 예측 시간, 학습 시간 | — |
 | `15_two_tasks_summary.csv` | 방향 분류(5초)와 변동성 분류(60초)의 모든 단계·방법별 검증/테스트 macro-F1 비교 | 검증·테스트 |
+| `16_cpu_gpu_runs.csv` | MLPLOB·TLOB·conv+GRU 학습 실행별 CPU 실행 / Apple GPU 실행의 검증 성능, 최적 epoch, 학습 시간 | 검증 |
+| `17_cpu_gpu_val_test.csv` | CPU 실행 / GPU 실행의 고른 구성, 시드별·평균 macro-F1, 부트스트랩 구간, 클래스별 재현율 | 검증·테스트 |
+| `18_cpu_gpu_same_weights.csv` | 같은 가중치로 CPU / GPU 예측할 때 확률 차이와 바뀐 예측 수 | 검증 |
+| `19_cpu_gpu_speed.csv` | 같은 노트북에서 학습 1 step, 예측 256개 시간(CPU 2스레드 / GPU)과 배수 | — |
 
 ### 주요 결과
 
@@ -68,6 +72,9 @@
 | `21_lob_val_test.png` | conv+GRU와 TLOB: 검증에서는 TLOB가 앞섰지만 테스트에서는 뒤짐 (시드별, 시드 3개 평균) |
 | `22_lob_cost.png` | 연산량·학습 시간 대비 검증 성능 |
 | `23_lob_val_curves.png` | MLPLOB·TLOB·conv+GRU의 epoch별 검증 성능 |
+| `24_cpu_gpu_val_test.png` | CPU 실행 / Apple GPU 실행: 학습 실행별 검증 성능, 시드 3개 평균의 검증·테스트 성능 |
+| `25_cpu_gpu_curves.png` | CPU 실행 / GPU 실행의 epoch별 검증 성능 (6개 구성, 시드 0) |
+| `26_cpu_gpu_speed.png` | 같은 노트북에서 CPU와 GPU의 학습·예측 시간 |
 
 ## 4. 용어
 
@@ -90,6 +97,8 @@ python plot_vol.py
 python plot_full.py
 python lob_cost.py     # results/lob_cost.jsonl (예측 시간은 측정할 때마다 조금씩 다름)
 python plot_lob.py     # figures/20~23_lob_*.png
+python cpu_gpu.py records   # results/cpu_gpu.jsonl (same, speed 단계는 LOB_MODELS.md 9.8절 참고)
+python plot_cpu_gpu.py      # figures/24~26_cpu_gpu_*.png
 ```
 
-MLPLOB·TLOB 비교의 자세한 설명은 [`../LOB_MODELS.md`](../LOB_MODELS.md)에 있음.
+MLPLOB·TLOB 비교의 자세한 설명은 [`../LOB_MODELS.md`](../LOB_MODELS.md)에, CPU 실행과 Apple GPU 실행의 비교는 같은 문서 9절에 있음.

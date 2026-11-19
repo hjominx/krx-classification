@@ -132,3 +132,43 @@ rows = [['simple rule', 'always flat / time of day only', s5['majority'], f5['ma
         ['MLPLOB / TLOB', 'conv+GRU reference, 3 seeds (same rows)', bv['convgru_bag_mF1'], te['convgru_bag_mF1'], na, na],
         ['round 3', 'stacking (best on VAL)', r3f['val_mF1'], r3f['mF1'], vr3['val_mF1'], vr3['mF1']]]
 write('15_two_tasks_summary.csv', ['round', 'method', 'direction_5s_val_mF1', 'direction_5s_test_mF1', 'volatility_60s_val_mF1', 'volatility_60s_test_mF1'], rows)
+
+# 12. CPU run vs Apple GPU (MPS) run of the MLPLOB / TLOB comparison (cpu_gpu.py, LOB_MODELS.md section 9)
+cg = rd('cpu_gpu.jsonl'); st = lambda s: [r for r in cg if r['stage'] == s]
+rows = [[r['arch'].upper(), inp[r['cols']], r['T'], r['seed'], 'mps', r['cpu_val_mF1'], r['gpu_val_mF1'], r['gpu_minus_cpu'], r['cpu_val_acc'], r['gpu_val_acc'],
+         r['cpu_best_epoch'] + 1, r['gpu_best_epoch'] + 1, r['cpu_epochs'], r['gpu_epochs'], r['curve_max_abs_diff'], r['cpu_min_per_epoch'], r['gpu_min_per_epoch']]
+        for r in st('records:run')]
+rows += [['conv+GRU', inp['full'], 50, r['seed'], 'cpu', r['cpu_run_val_mF1'], r['gpu_run_val_mF1'], round(r['gpu_run_val_mF1'] - r['cpu_run_val_mF1'], 4),
+          r['cpu_run_val_acc'], r['gpu_run_val_acc'], r['cpu_run_best_epoch'] + 1, r['gpu_run_best_epoch'] + 1, r['epochs'][0], r['epochs'][1], r['curve_max_abs_diff'], '', '']
+         for r in st('records:convgru')]
+write('16_cpu_gpu_runs.csv', ['model', 'input', 'snapshots', 'seed', 'device_in_gpu_run', 'cpu_run_val_macro_F1', 'gpu_run_val_macro_F1', 'gpu_minus_cpu',
+                              'cpu_run_val_accuracy', 'gpu_run_val_accuracy', 'cpu_run_best_epoch (1 = first)', 'gpu_run_best_epoch (1 = first)', 'cpu_run_epochs', 'gpu_run_epochs',
+                              'max_abs_diff_of_epoch_curves', 'cpu_run_min_per_epoch', 'gpu_run_min_per_epoch'], rows)
+g_ch, g_bv, g_te = st('records:choice')[-1], st('records:bagval')[-1], st('records:test')[-1]
+gdiff = lambda a, b: round(b - a, 4) if isinstance(a, (int, float)) and isinstance(b, (int, float)) else ''
+pair = lambda split, item, a, b: [split, item, a, b, gdiff(a, b)]
+rows = [pair('VAL', 'chosen config (best of the 4 full configs, seed 0)', g_ch['cpu_chosen'], g_ch['gpu_chosen'])]
+rows += [pair('VAL', f'TLOB 128, seed {s}', a, b) for s, a, b in zip((0, 1, 2), g_bv['cpu_seed_mF1'], g_bv['gpu_seed_mF1'])]
+rows += [pair('VAL', f'TLOB 128, mean of 3 seeds ({g_bv["n_cpu"]} rows)', g_bv['cpu_bag_mF1'], g_bv['gpu_bag_mF1']),
+         pair('VAL', 'conv+GRU, mean of 3 seeds', g_bv['cpu_convgru_bag_mF1'], g_bv['gpu_convgru_bag_mF1']),
+         pair('VAL', 'conv+GRU and TLOB averaged', g_bv['cpu_both_mF1'], g_bv['gpu_both_mF1'])]
+rows += [pair('TEST', f'TLOB 128, seed {s}', a, b) for s, a, b in zip((0, 1, 2), g_te['cpu_seed_mF1'], g_te['gpu_seed_mF1'])]
+rows += [pair('TEST', f'TLOB 128, mean of 3 seeds ({g_te["n_cpu"]} rows)', g_te['cpu_mF1'], g_te['gpu_mF1']),
+         pair('TEST', 'TLOB 128, mean of 3 seeds, accuracy', g_te['cpu_acc'], g_te['gpu_acc'])]
+rows += [pair('TEST', f'conv+GRU, seed {s}', a, b) for s, a, b in zip((0, 1, 2), g_te['cpu_convgru_seed_mF1'], g_te['gpu_convgru_seed_mF1'])]
+rows += [pair('TEST', 'conv+GRU, mean of 3 seeds', g_te['cpu_convgru_bag_mF1'], g_te['gpu_convgru_bag_mF1']),
+         pair('TEST', 'conv+GRU and TLOB averaged', g_te['cpu_both_mF1'], g_te['gpu_both_mF1'])]
+bc, bg = g_te['cpu_boot_vs_convgru'], g_te['gpu_boot_vs_convgru']
+rows += [pair('TEST', 'TLOB - conv+GRU, day-block bootstrap mean', bc['mean'], bg['mean']),
+         ['TEST', 'TLOB - conv+GRU, day-block bootstrap 95% CI', f"[{bc['ci95'][0]}, {bc['ci95'][1]}]", f"[{bg['ci95'][0]}, {bg['ci95'][1]}]", '']]
+rows += [pair('TEST', f'TLOB 128 mean, recall of {c}', g_te['cpu_recall'][c], g_te['gpu_recall'][c]) for c in ('down', 'flat', 'up')]
+rows += [pair('TEST', f'TLOB 128 mean, share of {c} predictions', g_te['cpu_pred_share'][c], g_te['gpu_pred_share'][c]) for c in ('down', 'flat', 'up')]
+rows += [['TEST', 'TLOB 128 mean, largest per-day macro-F1 difference (10 days)', '', '', g_te['day_max_abs_diff']]]
+write('17_cpu_gpu_val_test.csv', ['split', 'item', 'cpu_run', 'gpu_run', 'gpu_minus_cpu'], rows)
+write('18_cpu_gpu_same_weights.csv', ['checkpoint (GPU run)', 'trained_on', 'val_windows (every 10th)', 'max_abs_prob_diff', 'mean_abs_prob_diff', 'predictions_changed',
+                                      'val_macro_F1_on_cpu', 'val_macro_F1_on_mps'],
+      [[r['checkpoint'], r['trained_on'], r['n_windows'], r['max_abs_prob_diff'], r['mean_abs_prob_diff'], r['argmax_changed'], r['cpu_mF1'], r['mps_mF1']] for r in st('same')])
+write('19_cpu_gpu_speed.csv', ['model', 'snapshots', 'cpu_threads', 'cpu_ms_per_train_step_256', 'mps_ms_per_train_step_256', 'train_speedup', 'cpu_ms_forward_256',
+                               'mps_ms_forward_256', 'forward_speedup', 'cpu_min_per_epoch_train_only', 'mps_min_per_epoch_train_only', 'power', 'lid'],
+      [[r['name'].split('_')[0].upper().replace('CONVGRU', 'conv+GRU'), r['T'], r['cpu_threads'], r['cpu_train_ms'], r['mps_train_ms'], r['train_speedup'], r['cpu_fwd256_ms'],
+        r['mps_fwd256_ms'], r['fwd_speedup'], r['cpu_epoch_train_min'], r['mps_epoch_train_min'], r['power'], r['lid']] for r in st('speed')])

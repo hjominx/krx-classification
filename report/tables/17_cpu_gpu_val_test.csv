@@ -1,0 +1,27 @@
+﻿split,item,cpu_run,gpu_run,gpu_minus_cpu
+VAL,"chosen config (best of the 4 full configs, seed 0)",tlob_full128,tlob_full128,
+VAL,"TLOB 128, seed 0",0.5145,0.5133,-0.0012
+VAL,"TLOB 128, seed 1",0.5124,0.5124,0.0
+VAL,"TLOB 128, seed 2",0.5131,0.5134,0.0003
+VAL,"TLOB 128, mean of 3 seeds (1064299 rows)",0.5183,0.5181,-0.0002
+VAL,"conv+GRU, mean of 3 seeds",0.5152,0.5152,0.0
+VAL,conv+GRU and TLOB averaged,0.5194,0.5191,-0.0003
+TEST,"TLOB 128, seed 0",0.5062,0.5054,-0.0008
+TEST,"TLOB 128, seed 1",0.5047,0.5044,-0.0003
+TEST,"TLOB 128, seed 2",0.5039,0.5039,0.0
+TEST,"TLOB 128, mean of 3 seeds (920830 rows)",0.5094,0.5094,0.0
+TEST,"TLOB 128, mean of 3 seeds, accuracy",0.5475,0.5479,0.0004
+TEST,"conv+GRU, seed 0",0.5105,0.5105,0.0
+TEST,"conv+GRU, seed 1",0.5105,0.5105,0.0
+TEST,"conv+GRU, seed 2",0.5074,0.5073,-0.0001
+TEST,"conv+GRU, mean of 3 seeds",0.5138,0.5138,0.0
+TEST,conv+GRU and TLOB averaged,0.5145,0.5146,0.0001
+TEST,"TLOB - conv+GRU, day-block bootstrap mean",-0.0043,-0.0043,0.0
+TEST,"TLOB - conv+GRU, day-block bootstrap 95% CI","[-0.0062, -0.0027]","[-0.0059, -0.0029]",
+TEST,"TLOB 128 mean, recall of down",0.545,0.5456,0.0006
+TEST,"TLOB 128 mean, recall of flat",0.5619,0.5637,0.0018
+TEST,"TLOB 128 mean, recall of up",0.506,0.5022,-0.0038
+TEST,"TLOB 128 mean, share of down predictions",0.2803,0.2807,0.0004
+TEST,"TLOB 128 mean, share of flat predictions",0.4534,0.4554,0.002
+TEST,"TLOB 128 mean, share of up predictions",0.2663,0.2639,-0.0024
+TEST,"TLOB 128 mean, largest per-day macro-F1 difference (10 days)",,,0.0023

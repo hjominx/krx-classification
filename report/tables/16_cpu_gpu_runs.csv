@@ -1,0 +1,12 @@
+﻿model,input,snapshots,seed,device_in_gpu_run,cpu_run_val_macro_F1,gpu_run_val_macro_F1,gpu_minus_cpu,cpu_run_val_accuracy,gpu_run_val_accuracy,cpu_run_best_epoch (1 = first),gpu_run_best_epoch (1 = first),cpu_run_epochs,gpu_run_epochs,max_abs_diff_of_epoch_curves,cpu_run_min_per_epoch,gpu_run_min_per_epoch
+MLPLOB,40 raw book columns,50,0,mps,0.4984,0.4978,-0.0006,0.5566,0.546,5,10,8,12,0.0075,3.6,2.9
+TLOB,40 raw book columns,50,0,mps,0.4962,0.4955,-0.0007,0.5455,0.5444,9,10,12,12,0.0016,10.1,7.1
+MLPLOB,127 features,50,0,mps,0.5121,0.5128,0.0007,0.5682,0.5743,5,5,8,8,0.0036,4.1,3.5
+TLOB,127 features,50,0,mps,0.5107,0.5105,-0.0002,0.5751,0.5684,8,12,11,12,0.002,10.1,7.7
+MLPLOB,127 features,128,0,mps,0.51,0.5124,0.0024,0.5657,0.5718,2,10,5,12,0.0026,12.2,0.8
+TLOB,127 features,128,0,mps,0.5145,0.5133,-0.0012,0.5804,0.5777,7,7,10,10,0.001,32.7,7.7
+TLOB,127 features,128,1,mps,0.5124,0.5124,0.0,0.5788,0.5775,4,4,7,7,0.001,34.1,1.9
+TLOB,127 features,128,2,mps,0.5131,0.5134,0.0003,0.5728,0.5762,8,8,11,11,0.0023,32.2,1.8
+conv+GRU,127 features,50,0,cpu,0.5132,0.5132,0.0,0.5866,0.5866,3,3,6,6,0.0008,,
+conv+GRU,127 features,50,1,cpu,0.5107,0.5107,0.0,0.5927,0.5927,6,6,9,9,0.0006,,
+conv+GRU,127 features,50,2,cpu,0.5103,0.5103,0.0,0.5708,0.5708,4,4,7,7,0.0013,,

@@ -1,4 +1,4 @@
-"""One-command run of the MLPLOB / TLOB comparison on a machine with an NVIDIA GPU (Windows, macOS or Linux).
+"""One-command run of the MLPLOB / TLOB comparison on a machine with a GPU (NVIDIA CUDA on Windows / Linux, or Apple MPS on macOS).
 
 usage:  python run_lob_gpu.py <folder with the raw .jsonl.gz files>
 
