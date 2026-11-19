@@ -1,0 +1,15 @@
+﻿model,input,snapshots,n_features,seed,n_params,learning_rate,layers,best_epoch (1 = first),best_weights,val_macro_F1,val_accuracy,train_minutes
+conv+GRU,40 raw book columns,50,40,0,45251,,,,,0.4972,0.5508,
+conv+GRU,127 features,50,127,0,61955,0.001,,3,raw,0.5132,0.5866,5.3
+conv+GRU,127 features,50,127,1,61955,0.001,,6,raw,0.5107,0.5927,7.5
+conv+GRU,127 features,50,127,2,61955,0.001,,4,raw,0.5103,0.5708,6.4
+conv+GRU,127 features,50,127,3,61955,0.001,,5,raw,0.5107,0.574,7.4
+conv+GRU,127 features,50,127,4,61955,0.001,,3,raw,0.5114,0.5921,5.8
+MLPLOB,40 raw book columns,50,40,0,386243,0.003,3,5,ema,0.4984,0.5566,25.0
+TLOB,40 raw book columns,50,40,0,548081,0.0001,4,9,ema,0.4962,0.5455,109.7
+MLPLOB,127 features,50,127,0,391985,0.003,3,5,ema,0.5121,0.5682,27.8
+TLOB,127 features,50,127,0,553823,0.0001,4,8,raw,0.5107,0.5751,99.3
+MLPLOB,127 features,128,127,0,1046483,0.003,3,2,ema,0.51,0.5657,47.8
+TLOB,127 features,128,127,0,1543955,0.0001,4,7,raw,0.5145,0.5804,291.4
+TLOB,127 features,128,127,1,1543955,0.0001,4,4,raw,0.5124,0.5788,201.6
+TLOB,127 features,128,127,2,1543955,0.0001,4,8,raw,0.5131,0.5728,317.5

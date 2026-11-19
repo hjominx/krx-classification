@@ -1,0 +1,11 @@
+﻿model,seeds,val_macro_F1 (single seeds: own VAL rows; means: the same 1064299 rows),test_macro_F1 (same 920830 rows)
+"conv+GRU (127 features, 50 snapshots)",seed 0,0.5132,0.5105
+"conv+GRU (127 features, 50 snapshots)",seed 1,0.5107,0.5105
+"conv+GRU (127 features, 50 snapshots)",seed 2,0.5103,0.5074
+"conv+GRU (127 features, 50 snapshots)",mean of 3 seeds,0.5152,0.5138
+"TLOB (127 features, 128 snapshots)",seed 0,0.5145,0.5062
+"TLOB (127 features, 128 snapshots)",seed 1,0.5124,0.5047
+"TLOB (127 features, 128 snapshots)",seed 2,0.5131,0.5039
+"TLOB (127 features, 128 snapshots)",mean of 3 seeds,0.5183,0.5094
+conv+GRU and TLOB averaged,mean of 6,0.5194,0.5145
+"TLOB - conv+GRU (means of 3 seeds), day-block bootstrap",mean / 95% CI,,"-0.0043 [-0.0062, -0.0027]"

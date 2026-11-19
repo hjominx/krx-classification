@@ -1,0 +1,5 @@
+{"stage": "cost", "name": "base", "n_params": 61955, "threads": 2, "ms_per_256": 13.6, "ms_per_1": 0.84}
+{"stage": "cost", "name": "mt", "n_params": 62735, "threads": 2, "ms_per_256": 13.1, "ms_per_1": 1.18}
+{"stage": "cost", "name": "tcn", "n_params": 107203, "threads": 2, "ms_per_256": 17.7, "ms_per_1": 0.64}
+{"stage": "cost", "name": "mt_st2", "n_params": 62735, "threads": 2, "ms_per_256": 11.7, "ms_per_1": 0.75}
+{"stage": "cost", "name": "tlob_full128", "n_params": 1543955, "threads": 2, "ms_per_256": 454.1, "ms_per_1": 3.21}

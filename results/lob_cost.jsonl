@@ -1,0 +1,5 @@
+{"name": "convgru_full50", "T": 50, "n_features": 127, "n_params": 61955, "macs": 3062592, "macs_vs_convgru": 1.0, "threads": 2, "ms_per_256": 12.5, "ms_per_1": 0.79, "train_min": 5.3}
+{"name": "mlplob_full50", "T": 50, "n_features": 127, "n_params": 391985, "macs": 9434176, "macs_vs_convgru": 3.1, "threads": 2, "ms_per_256": 53.7, "ms_per_1": 0.77, "train_min": 27.8}
+{"name": "mlplob_full128", "T": 128, "n_features": 127, "n_params": 1046483, "macs": 39461056, "macs_vs_convgru": 12.9, "threads": 2, "ms_per_256": 238.6, "ms_per_1": 1.37, "train_min": 47.8}
+{"name": "tlob_full50", "T": 50, "n_features": 127, "n_params": 553823, "macs": 21107776, "macs_vs_convgru": 6.9, "threads": 2, "ms_per_256": 105.7, "ms_per_1": 1.85, "train_min": 99.3}
+{"name": "tlob_full128", "T": 128, "n_features": 127, "n_params": 1543955, "macs": 89792704, "macs_vs_convgru": 29.3, "threads": 2, "ms_per_256": 456.8, "ms_per_1": 3.23, "train_min": 291.4}

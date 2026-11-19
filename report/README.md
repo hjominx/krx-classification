@@ -28,6 +28,9 @@
 | `09_volatility_confusion_gru_test.csv` | 변동성 분류 conv+GRU의 혼동행렬(건수) | 테스트 |
 | `10_selective_next_move.csv` | 다음 가격 변화 방향을 확신할 때만 답할 때의 목표 적중률별 결과 | 검증·테스트 |
 | `11_backtest_test.csv` | 확신 기준(85%) 신호로 거래했을 때 비용 가정별 손익 | 테스트 |
+| `12_lob_models_val.csv` | MLPLOB·TLOB·conv+GRU의 모든 학습 실행(입력, 스냅샷 길이, 시드별): 설정, 최적 epoch, 성능, 학습 시간 | 검증 |
+| `13_lob_models_val_test.csv` | conv+GRU와 TLOB의 시드별·시드 3개 평균 macro-F1, 차이의 날짜 단위 bootstrap 95% 구간 | 검증·테스트 |
+| `14_lob_models_cost.csv` | 모델별 파라미터, 연산량(곱셈-덧셈), 예측 시간, 학습 시간 | — |
 
 ### 주요 결과
 
@@ -60,6 +63,10 @@
 | `17_trades_test.png` | 체결 피처 추가 전후 테스트 비교 (예측 시간별, 날짜별) |
 | `18_vol_confusion.png` | 변동성 분류 conv+GRU 혼동행렬 (비율) |
 | `19_full_training.png` | 전체 데이터 학습 시 학습 손실과 검증 성능 (과적합) |
+| `20_lob_val.png` | MLPLOB·TLOB·conv+GRU: 입력과 스냅샷 길이별 검증 성능 |
+| `21_lob_val_test.png` | conv+GRU와 TLOB: 검증에서는 TLOB가 앞섰지만 테스트에서는 뒤짐 (시드별, 시드 3개 평균) |
+| `22_lob_cost.png` | 연산량·학습 시간 대비 검증 성능 |
+| `23_lob_val_curves.png` | MLPLOB·TLOB·conv+GRU의 epoch별 검증 성능 |
 
 ## 4. 용어
 
@@ -80,4 +87,8 @@ python make_tables.py   # report/tables/*.csv
 python plots.py         # figures/*.png
 python plot_vol.py
 python plot_full.py
+python lob_cost.py     # results/lob_cost.jsonl (예측 시간은 측정할 때마다 조금씩 다름)
+python plot_lob.py     # figures/20~23_lob_*.png
 ```
+
+MLPLOB·TLOB 비교의 자세한 설명은 [`../LOB_MODELS.md`](../LOB_MODELS.md)에 있습니다.

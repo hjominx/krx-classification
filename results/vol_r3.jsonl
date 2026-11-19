@@ -1,0 +1,34 @@
+{"stage": "info", "n_rows": 1062287, "n_days": 12, "class_shares": [0.4005, 0.4441, 0.1554]}
+{"stage": "r2_winner", "thr": [2.0, 2.85], "mF1": 0.6412}
+{"stage": "member", "name": "gbm", "mF1_m1": 0.6283, "mF1": 0.6363, "mult": [1.0, 1.1, 1.6]}
+{"stage": "member", "name": "logreg", "mF1_m1": 0.6187, "mF1": 0.6275, "mult": [1.0, 1.2, 1.65]}
+{"stage": "member", "name": "gru", "mF1_m1": 0.6294, "mF1": 0.6339, "mult": [1.0, 1.1, 1.5]}
+{"stage": "stack", "name": "stack_lr", "ctx": [], "class_weight": "balanced", "mF1_m1": 0.6087, "mF1": 0.64, "mult": [1.0, 1.15, 0.5], "sec": 101}
+{"stage": "stack", "name": "stack_lr_uw", "ctx": [], "class_weight": null, "mF1_m1": 0.6355, "mF1": 0.6398, "mult": [1.0, 1.05, 1.4], "sec": 142}
+{"stage": "stack", "name": "stack_lr_ctx", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": "balanced", "mF1_m1": 0.6099, "mF1": 0.6405, "mult": [1.0, 1.1, 0.5], "sec": 186}
+{"stage": "stack", "name": "stack_lr_ctx_uw", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": null, "mF1_m1": 0.6359, "mF1": 0.6403, "mult": [1.0, 1.05, 1.35], "sec": 228}
+{"stage": "stack", "name": "stack_gbm", "ctx": [], "class_weight": "balanced", "mF1_m1": 0.6108, "mF1": 0.6422, "mult": [1.0, 1.1, 0.5], "sec": 312}
+{"stage": "stack", "name": "stack_gbm_uw", "ctx": [], "class_weight": null, "mF1_m1": 0.6386, "mF1": 0.6413, "mult": [1.0, 1.0, 1.35], "sec": 391}
+{"stage": "stack", "name": "stack_gbm_ctx", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": "balanced", "mF1_m1": 0.6097, "mF1": 0.6316, "mult": [1.0, 1.15, 0.5], "sec": 484}
+{"stage": "stack", "name": "stack_gbm_ctx_uw", "ctx": ["min_since_open", "spread_ticks", "rv_10s", "rv_300s"], "class_weight": null, "mF1_m1": 0.6255, "mF1": 0.6287, "mult": [1.0, 1.0, 1.3], "sec": 574}
+{"stage": "cand", "name": "stack_gbm", "mF1": 0.6422, "method": "stack", "stack_kind": "gbm", "ctx": false, "class_weight": "balanced", "mult": [1.0, 1.1, 0.5]}
+{"stage": "cand", "name": "avg:gbm+gru", "mF1": 0.6414, "method": "avg", "members": ["gbm", "gru"], "mult": [1.0, 1.1, 1.55]}
+{"stage": "cand", "name": "stack_gbm_uw", "mF1": 0.6413, "method": "stack", "stack_kind": "gbm", "ctx": false, "class_weight": null, "mult": [1.0, 1.0, 1.35]}
+{"stage": "cand", "name": "gbr", "mF1": 0.6412, "method": "gbr", "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "stack_lr_ctx", "mF1": 0.6405, "method": "stack", "stack_kind": "lr", "ctx": true, "class_weight": "balanced", "mult": [1.0, 1.1, 0.5]}
+{"stage": "cand", "name": "stack_lr_ctx_uw", "mF1": 0.6403, "method": "stack", "stack_kind": "lr", "ctx": true, "class_weight": null, "mult": [1.0, 1.05, 1.35]}
+{"stage": "cand", "name": "stack_lr", "mF1": 0.64, "method": "stack", "stack_kind": "lr", "ctx": false, "class_weight": "balanced", "mult": [1.0, 1.15, 0.5]}
+{"stage": "cand", "name": "stack_lr_uw", "mF1": 0.6398, "method": "stack", "stack_kind": "lr", "ctx": false, "class_weight": null, "mult": [1.0, 1.05, 1.4]}
+{"stage": "cand", "name": "avg:gbm+logreg+gru", "mF1": 0.6392, "method": "avg", "members": ["gbm", "logreg", "gru"], "mult": [1.0, 1.15, 1.65]}
+{"stage": "cand", "name": "avg:gbm+logreg", "mF1": 0.6373, "method": "avg", "members": ["gbm", "logreg"], "mult": [1.0, 1.1, 1.65]}
+{"stage": "cand", "name": "avg:gbm", "mF1": 0.6363, "method": "avg", "members": ["gbm"], "mult": [1.0, 1.1, 1.6]}
+{"stage": "cand", "name": "avg:logreg+gru", "mF1": 0.6351, "method": "avg", "members": ["logreg", "gru"], "mult": [1.0, 1.15, 1.65]}
+{"stage": "cand", "name": "avg:gru", "mF1": 0.6339, "method": "avg", "members": ["gru"], "mult": [1.0, 1.1, 1.5]}
+{"stage": "cand", "name": "stack_gbm_ctx", "mF1": 0.6316, "method": "stack", "stack_kind": "gbm", "ctx": true, "class_weight": "balanced", "mult": [1.0, 1.15, 0.5]}
+{"stage": "cand", "name": "stack_gbm_ctx_uw", "mF1": 0.6287, "method": "stack", "stack_kind": "gbm", "ctx": true, "class_weight": null, "mult": [1.0, 1.0, 1.3]}
+{"stage": "cand", "name": "avg:logreg", "mF1": 0.6275, "method": "avg", "members": ["logreg"], "mult": [1.0, 1.2, 1.65]}
+{"stage": "winner", "name": "stack_gbm", "mF1": 0.6422, "method": "stack", "stack_kind": "gbm", "ctx": false, "class_weight": "balanced", "mult": [1.0, 1.1, 0.5], "acc": 0.6464, "recall": [0.7044, 0.6227, 0.565], "r2_winner_mF1": 0.6412}
+{"stage": "half", "chosen_on": [20261006, 20261012, 20261013, 20261014, 20261015, 20261016], "chosen": "stack_gbm", "spec": {"method": "stack", "stack_kind": "gbm", "ctx": false, "class_weight": "balanced", "mult": [1.0, 1.1, 0.7]}, "mF1_other_half": 0.638, "r2_recipe_other_half": 0.6398, "r2_thr_on_half": [2.0, 2.8]}
+{"stage": "half", "chosen_on": [20261019, 20261020, 20261021, 20261022, 20261023, 20261026], "chosen": "stack_gbm_uw", "spec": {"method": "stack", "stack_kind": "gbm", "ctx": false, "class_weight": null, "mult": [1.0, 1.0, 0.95]}, "mF1_other_half": 0.6213, "r2_recipe_other_half": 0.6286, "r2_thr_on_half": [2.05, 2.9]}
+{"stage": "val_done", "sec": 1128}
+{"stage": "test", "pipeline": "stack_gbm", "method": "stack", "val_mF1": 0.6422, "n": 918939, "class_shares": [0.3784, 0.4152, 0.2064], "mF1": 0.663, "acc": 0.6551, "recall": [0.631, 0.6616, 0.6862], "member_mF1": {"gru": 0.6575, "gbm": 0.6652, "logreg": 0.6566}, "gbr_r2_thr_mF1": 0.6609, "refit_gbr_agrees_with_r2": 1.0, "r2_pipeline_mF1": 0.6609, "boot_new_minus_r2": {"mean": 0.002, "ci95": [-0.001, 0.0041], "share_positive": 0.927}, "days_better": 7, "day_mF1": {"20261027": 0.692, "20261028": 0.6154, "20261029": 0.6589, "20261030": 0.4908, "20261102": 0.6067, "20261103": 0.6108, "20261104": 0.5343, "20261105": 0.5538, "20261106": 0.4658, "20261109": 0.6118}, "r2_day_mF1": {"20261027": 0.6894, "20261028": 0.6128, "20261029": 0.6712, "20261030": 0.4944, "20261102": 0.6037, "20261103": 0.6059, "20261104": 0.5118, "20261105": 0.5504, "20261106": 0.4696, "20261109": 0.609}, "confusion": [[219408, 124991, 3339], [74468, 252453, 54646], [2334, 57173, 130127]], "sec": 230}
