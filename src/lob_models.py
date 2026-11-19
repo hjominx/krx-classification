@@ -35,7 +35,7 @@ import common as C
 import exp_v2 as E
 
 torch.set_num_threads(int(os.environ.get('OMP_NUM_THREADS', 2)))
-DEV = torch.device('cuda' if torch.cuda.is_available() else 'cpu')   # GPU when present; CPU runs are unchanged
+DEV = torch.device('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu')   # GPU (NVIDIA or Apple) when present; CPU runs are unchanged
 OUT = E.OUT; RES = os.path.join(OUT, 'lob_models.jsonl'); mf1 = E.mf1
 HS = list(C.HORIZONS); hi = HS.index(5); BS, EPOCHS, PER, PAT = 256, 12, 200_000, 3
 RAW = list(range(40))                                    # ask_dist0-9, bid_dist0-9, log_aq0-9, log_bq0-9 of common.py
