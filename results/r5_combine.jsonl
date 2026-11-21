@@ -1,0 +1,36 @@
+{"stage": "info", "n_rows": 1062287, "new_bags": ["vreg_mh", "vreg_lr", "vreg_reg", "joint"]}
+{"stage": "cand", "name": "vreg_mh+gbr_0.7", "mF1": 0.6423, "src": "vreg_mh", "w": 0.7, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_mh+gbr_0.6", "mF1": 0.6421, "src": "vreg_mh", "w": 0.6, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_lr+gbr_0.7", "mF1": 0.642, "src": "vreg_lr", "w": 0.7, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_mh+gbr_0.8", "mF1": 0.6419, "src": "vreg_mh", "w": 0.8, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_lr+gbr_0.8", "mF1": 0.6418, "src": "vreg_lr", "w": 0.8, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "mean_new+gbr_0.7", "mF1": 0.6418, "src": "mean_new", "w": 0.7, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "mean_new+gbr_0.6", "mF1": 0.6417, "src": "mean_new", "w": 0.6, "thr": [2.0, 2.8]}
+{"stage": "cand", "name": "vreg_mh+gbr_0.5", "mF1": 0.6417, "src": "vreg_mh", "w": 0.5, "thr": [2.0, 2.8]}
+{"stage": "cand", "name": "joint+gbr_0.8", "mF1": 0.6417, "src": "joint", "w": 0.8, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_lr+gbr_0.6", "mF1": 0.6417, "src": "vreg_lr", "w": 0.6, "thr": [2.0, 2.8]}
+{"stage": "cand", "name": "mean_new+gbr_0.8", "mF1": 0.6417, "src": "mean_new", "w": 0.8, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "joint+gbr_0.7", "mF1": 0.6417, "src": "joint", "w": 0.7, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_mh+gbr_0.9", "mF1": 0.6416, "src": "vreg_mh", "w": 0.9, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_reg+gbr_0.8", "mF1": 0.6415, "src": "vreg_reg", "w": 0.8, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "r4", "mF1": 0.6415, "src": "r4", "w": 0.8, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "joint+gbr_0.9", "mF1": 0.6415, "src": "joint", "w": 0.9, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_reg+gbr_0.7", "mF1": 0.6415, "src": "vreg_reg", "w": 0.7, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "mean_new+gbr_0.9", "mF1": 0.6415, "src": "mean_new", "w": 0.9, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_reg+gbr_0.9", "mF1": 0.6414, "src": "vreg_reg", "w": 0.9, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_lr+gbr_0.9", "mF1": 0.6414, "src": "vreg_lr", "w": 0.9, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_lr+gbr_0.5", "mF1": 0.6414, "src": "vreg_lr", "w": 0.5, "thr": [2.0, 2.8]}
+{"stage": "cand", "name": "joint+gbr_0.6", "mF1": 0.6413, "src": "joint", "w": 0.6, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_mh+gbr_0.4", "mF1": 0.6413, "src": "vreg_mh", "w": 0.4, "thr": [2.0, 2.8]}
+{"stage": "cand", "name": "vreg_reg+gbr_0.6", "mF1": 0.6412, "src": "vreg_reg", "w": 0.6, "thr": [2.0, 2.8]}
+{"stage": "cand", "name": "mean_new+gbr_0.5", "mF1": 0.6412, "src": "mean_new", "w": 0.5, "thr": [2.0, 2.8]}
+{"stage": "cand", "name": "r2", "mF1": 0.6412, "src": "gbr", "w": 1.0, "thr": [2.0, 2.85]}
+{"stage": "cand", "name": "vreg_lr+gbr_0.4", "mF1": 0.6409, "src": "vreg_lr", "w": 0.4, "thr": [2.0, 2.8]}
+{"stage": "cand", "name": "mean_new+gbr_0.4", "mF1": 0.6408, "src": "mean_new", "w": 0.4, "thr": [2.0, 2.8]}
+{"stage": "cand", "name": "joint+gbr_0.5", "mF1": 0.6408, "src": "joint", "w": 0.5, "thr": [2.0, 2.8]}
+{"stage": "cand", "name": "vreg_reg+gbr_0.5", "mF1": 0.6408, "src": "vreg_reg", "w": 0.5, "thr": [2.0, 2.8]}
+{"stage": "winner", "name": "vreg_mh+gbr_0.7", "mF1": 0.6423, "src": "vreg_mh", "w": 0.7, "thr": [2.0, 2.85], "acc": 0.6457, "recall": [0.688, 0.6371, 0.5611]}
+{"stage": "half", "chosen_on": [20261006, 20261012, 20261013, 20261014, 20261015, 20261016], "chosen": "vreg_mh+gbr_0.7", "spec": {"src": "vreg_mh", "w": 0.7, "thr": [2.0, 2.75]}, "mF1_other_half": 0.6361, "r2_recipe_other_half": 0.6398, "r4_recipe_other_half": 0.6346}
+{"stage": "half", "chosen_on": [20261019, 20261020, 20261021, 20261022, 20261023, 20261026], "chosen": "vreg_lr+gbr_0.5", "spec": {"src": "vreg_lr", "w": 0.5, "thr": [2.0, 2.9]}, "mF1_other_half": 0.6242, "r2_recipe_other_half": 0.6286, "r4_recipe_other_half": 0.6255}
+{"stage": "val_done", "sec": 27}
+{"stage": "vol_test", "pipeline": "vreg_mh+gbr_0.7", "spec": {"src": "vreg_mh", "w": 0.7, "thr": [2.0, 2.85]}, "val_mF1": 0.6423, "n": 918939, "mF1": 0.6637, "acc": 0.6556, "recall": [0.6272, 0.6633, 0.692], "refit_gbr_agrees_with_r2": 1.0, "r2_mF1": 0.6609, "r3_mF1": 0.663, "r4_mF1": 0.6625, "boot_new_minus_r2": {"mean": 0.0027, "ci95": [0.0005, 0.0049], "share_positive": 0.992}, "boot_new_minus_r3": {"mean": 0.0007, "ci95": [-0.0019, 0.0031], "share_positive": 0.725}, "boot_new_minus_r4": {"mean": 0.0012, "ci95": [0.0002, 0.0022], "share_positive": 0.989}, "days_better_than_r2": 7, "day_mF1": {"20261027": 0.6934, "20261028": 0.6182, "20261029": 0.6706, "20261030": 0.5015, "20261102": 0.6002, "20261103": 0.6154, "20261104": 0.5191, "20261105": 0.5483, "20261106": 0.4745, "20261109": 0.6108}, "confusion": [[218109, 126121, 3508], [73078, 253097, 55392], [2334, 56075, 131225]], "sec": 312}
