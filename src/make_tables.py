@@ -131,6 +131,10 @@ rows = [['simple rule', 'always flat / time of day only', s5['majority'], f5['ma
         ['MLPLOB / TLOB', 'TLOB, 128 snapshots, 3 seeds (direction only)', bv['bag_mF1'], te['mF1'], na, na],
         ['MLPLOB / TLOB', 'conv+GRU reference, 3 seeds (same rows)', bv['convgru_bag_mF1'], te['convgru_bag_mF1'], na, na],
         ['round 3', 'stacking (best on VAL)', r3f['val_mF1'], r3f['mF1'], vr3['val_mF1'], vr3['mF1']]]
+vr4 = {r['stage']: r for r in rd('vol_r4.jsonl')} if os.path.exists(os.path.join(R, 'vol_r4.jsonl')) else {}
+if 'test' in vr4 and not vr4['test'].get('skipped'):
+    rows.append(['round 4', f"volatility only: GBM regression x {vr4['test']['w']} + conv+GRU regression x {round(1 - vr4['test']['w'], 2)}", na, na,
+                 vr4['winner']['mF1'], vr4['test']['mF1']])
 write('15_two_tasks_summary.csv', ['round', 'method', 'direction_5s_val_mF1', 'direction_5s_test_mF1', 'volatility_60s_val_mF1', 'volatility_60s_test_mF1'], rows)
 
 # 12. CPU run vs Apple GPU (MPS) run of the MLPLOB / TLOB comparison (cpu_gpu.py, LOB_MODELS.md section 9)

@@ -1,0 +1,20 @@
+{"stage": "train", "name": "convgru_reg", "seed": 0, "best_epoch": 0, "best_weights": "ema", "val10_mF1": 0.6335, "val_mF1": 0.6331, "thr": [2.0, 2.8], "val_rmse_log": 0.5722, "val_acc": 0.6353, "smoke": false, "sec": 271, "curve": [{"epoch": 0, "raw": 0.6305, "ema": 0.6335, "min": 0.9}, {"epoch": 1, "raw": 0.6314, "ema": 0.6329, "min": 1.8}, {"epoch": 2, "raw": 0.6269, "ema": 0.6329, "min": 2.6}, {"epoch": 3, "raw": 0.6131, "ema": 0.6264, "min": 3.4}]}
+{"stage": "train", "name": "convgru_reg", "seed": 1, "best_epoch": 0, "best_weights": "raw", "val10_mF1": 0.6329, "val_mF1": 0.6325, "thr": [2.0, 2.8], "val_rmse_log": 0.5718, "val_acc": 0.6344, "smoke": false, "sec": 283, "curve": [{"epoch": 0, "raw": 0.6329, "ema": 0.6324, "min": 0.9}, {"epoch": 1, "raw": 0.6301, "ema": 0.6323, "min": 1.8}, {"epoch": 2, "raw": 0.6219, "ema": 0.6308, "min": 2.7}, {"epoch": 3, "raw": 0.6164, "ema": 0.6237, "min": 3.6}]}
+{"stage": "train", "name": "convgru_reg", "seed": 2, "best_epoch": 0, "best_weights": "ema", "val10_mF1": 0.6331, "val_mF1": 0.633, "thr": [2.0, 2.8], "val_rmse_log": 0.566, "val_acc": 0.6358, "smoke": false, "sec": 285, "curve": [{"epoch": 0, "raw": 0.626, "ema": 0.6331, "min": 1.0}, {"epoch": 1, "raw": 0.6286, "ema": 0.6318, "min": 1.9}, {"epoch": 2, "raw": 0.6209, "ema": 0.628, "min": 2.8}, {"epoch": 3, "raw": 0.6103, "ema": 0.6225, "min": 3.7}]}
+{"stage": "info", "n_rows": 1062287, "n_days": 12, "round3_stack_mF1": 0.6422, "round3_name": "stack_gbm"}
+{"stage": "cand", "name": "blend_0.8", "mF1": 0.6415, "thr": [2.0, 2.85], "w": 0.8}
+{"stage": "cand", "name": "blend_0.9", "mF1": 0.6414, "thr": [2.0, 2.85], "w": 0.9}
+{"stage": "cand", "name": "blend_0.7", "mF1": 0.6413, "thr": [2.0, 2.8], "w": 0.7}
+{"stage": "cand", "name": "gbr_r2", "mF1": 0.6412, "thr": [2.0, 2.85], "w": 1.0}
+{"stage": "cand", "name": "blend_0.6", "mF1": 0.6411, "thr": [2.0, 2.8], "w": 0.6}
+{"stage": "cand", "name": "blend_0.5", "mF1": 0.6407, "thr": [2.0, 2.8], "w": 0.5}
+{"stage": "cand", "name": "blend_0.4", "mF1": 0.64, "thr": [2.0, 2.8], "w": 0.4}
+{"stage": "cand", "name": "blend_0.3", "mF1": 0.6389, "thr": [2.0, 2.8], "w": 0.3}
+{"stage": "cand", "name": "blend_0.2", "mF1": 0.6377, "thr": [2.0, 2.8], "w": 0.2}
+{"stage": "cand", "name": "blend_0.1", "mF1": 0.6363, "thr": [2.0, 2.8], "w": 0.1}
+{"stage": "cand", "name": "convgru_reg", "mF1": 0.6347, "thr": [2.0, 2.8], "w": 0.0}
+{"stage": "winner", "name": "blend_0.8", "mF1": 0.6415, "thr": [2.0, 2.85], "w": 0.8, "acc": 0.6445, "recall": [0.6847, 0.6365, 0.5641], "gbr_r2_mF1": 0.6412, "round3_stack_mF1": 0.6422}
+{"stage": "half", "chosen_on": [20261006, 20261012, 20261013, 20261014, 20261015, 20261016], "chosen": "blend_0.8", "spec": {"thr": [2.0, 2.75], "w": 0.8}, "mF1_other_half": 0.6346, "r2_recipe_other_half": 0.6398, "r2_thr_on_half": [2.0, 2.8], "round3_other_half": 0.6464}
+{"stage": "half", "chosen_on": [20261019, 20261020, 20261021, 20261022, 20261023, 20261026], "chosen": "blend_0.6", "spec": {"thr": [2.0, 2.9], "w": 0.6}, "mF1_other_half": 0.6223, "r2_recipe_other_half": 0.6286, "r2_thr_on_half": [2.05, 2.9], "round3_other_half": 0.6372}
+{"stage": "val_done", "sec": 4}
+{"stage": "test", "pipeline": "blend_0.8", "w": 0.8, "thr": [2.0, 2.85], "val_mF1": 0.6415, "n": 918939, "class_shares": [0.3784, 0.4152, 0.2064], "mF1": 0.6625, "acc": 0.6547, "recall": [0.6289, 0.6635, 0.6842], "convgru_reg_alone_mF1": 0.654, "refit_gbr_agrees_with_r2": 1.0, "r2_mF1": 0.6609, "r3_mF1": 0.663, "boot_new_minus_r2": {"mean": 0.0015, "ci95": [0.0002, 0.0029], "share_positive": 0.986}, "boot_new_minus_r3": {"mean": -0.0005, "ci95": [-0.0024, 0.0017], "share_positive": 0.296}, "days_better_than_r2": 7, "day_mF1": {"20261027": 0.6928, "20261028": 0.6155, "20261029": 0.6696, "20261030": 0.4979, "20261102": 0.6024, "20261103": 0.6105, "20261104": 0.5175, "20261105": 0.5479, "20261106": 0.4743, "20261109": 0.6094}, "confusion": [[218699, 125566, 3473], [74030, 253177, 54360], [2400, 57488, 129746]], "sec": 185}

@@ -1,6 +1,6 @@
 # 변동성 분류(60초): 무엇을 어떻게 나누나
 
-이 프로젝트는 두 과제를 다룸. 숫자는 모두 `results/vol_cls.jsonl`, `results/vol_v2.jsonl`, `results/vol_r3.jsonl`, `results/r3_final.jsonl`에서 옮겼음.
+이 프로젝트는 두 과제를 다룸. 숫자는 모두 `results/vol_cls.jsonl`, `results/vol_v2.jsonl`, `results/vol_r3.jsonl`, `results/vol_r4.jsonl`, `results/r3_final.jsonl`에서 옮겼음.
 
 | | 방향 분류 (5초) | 변동성 분류 (60초) |
 |---|---|---|
@@ -45,6 +45,7 @@
 | conv+GRU | `vol_cls.py` | 0.6539 |
 | Round 2: RV60을 숫자로 예측(GBM 회귀)한 뒤 경계값으로 자름 | `vol_v2.py` | 0.6612 |
 | Round 3: 여러 모델 결합(stacking) | `vol_r3.py` | 0.6630 |
+| Round 4: GBM 회귀 0.8 + conv+GRU 회귀 0.2 혼합 (5절) | `vol_r4.py` | 0.6625 |
 
 - Round 2는 `log(1 + RV60)`을 회귀로 예측한 뒤, 검증셋에서 macro-F1이 가장 높은 경계값 [2.0, 2.85]로 잘랐음. 틱으로 바꾸면 약 6.4틱과 16.3틱으로, 정답 기준(7.0, 19.5)보다 조금 낮음.
 - Round 3 − Round 2: +0.0020, 날짜 단위 부트스트랩 95% 구간 [−0.0010, +0.0041]로 0을 포함하므로 유의하지 않음(자세한 내용은 [`ROUND3.md`](ROUND3.md) 9절).
@@ -52,7 +53,40 @@
 - conv+GRU의 날짜별 테스트 macro-F1은 0.514–0.672로 날마다 차이가 큼.
 - 테스트 기간은 `vol_cls.py`, `vol_v2.py`, `vol_r3.py`에서 반복해 썼으므로 깨끗한 hold-out이 아님.
 
-## 5. 재현
+## 5. Round 4: conv+GRU도 회귀로 (`vol_r4.py`)
+- 아이디어: GBM은 분류보다 회귀 + 경계값이 확실히 나았음(검증 0.6289 → 0.6417). 그런데 가장 빠른 딥러닝 모델인 conv+GRU는 분류로만 학습했었음. 그래서 conv+GRU도 다음 60초 변동성 크기(`log(1 + RV60)`)를 숫자로 예측하게 하고, 경계값 두 개로 클래스를 나눴음.
+- 설정: 입력 145개 열, 50스냅샷, 출력 1개, 평균제곱오차. 나머지 학습 규칙은 Round 2 conv+GRU와 같음. 시드 3개의 예측 평균을 씀. 설계는 실행 전에 고정했음.
+
+**검증셋 (같은 행 1,062,287개)**
+
+| 후보 | 검증 macro-F1 |
+|---|---|
+| conv+GRU 분류, 시드별 (Round 2) | 0.6288 / 0.6172 / 0.6253 |
+| conv+GRU 회귀, 시드별 | 0.6331 / 0.6325 / 0.6330 |
+| conv+GRU 회귀, 시드 3개 평균 | 0.6347 |
+| Round 2: GBM 회귀 + 경계값 | 0.6412 |
+| **GBM 회귀 0.8 + conv+GRU 회귀 0.2 혼합 (우승)** | **0.6415** |
+| (참고) Round 3 stacking | 0.6422 |
+
+- conv+GRU는 회귀로 바꾸자 시드마다 +0.004~+0.016 올랐고 시드 간 차이도 줄었음. 세 시드 모두 첫 epoch가 가장 좋았고 이후 검증 점수가 떨어졌음.
+- 하지만 단독으로는 GBM 회귀(0.6412)에 못 미쳤고, 섞어도 +0.0003에 그쳤음.
+- 반쪽 검증(6일로 고르고 나머지 6일로 평가)에서는 두 번 모두 Round 2가 이겼음: 0.6346 vs 0.6398, 0.6223 vs 0.6286.
+
+**테스트셋 (한 번만 평가, 같은 행 918,939개)**
+
+| | macro-F1 | 정확도 |
+|---|---|---|
+| Round 4 혼합 | 0.6625 | 0.6547 |
+| Round 3 stacking | 0.6630 | — |
+| Round 2 GBM 회귀 + 경계값 | 0.6609 | — |
+| conv+GRU 회귀 단독 | 0.6540 | — |
+
+- Round 4 − Round 2: +0.0015, 날짜 단위 부트스트랩 95% 구간 [+0.0002, +0.0029], 테스트 10일 중 7일에서 높았음.
+- Round 4 − Round 3: −0.0005, 95% 구간 [−0.0024, +0.0017]로 차이 없음.
+- 다시 학습한 GBM 회귀의 테스트 예측은 Round 2와 100% 같았음.
+- 해석: 테스트에서는 Round 2보다 조금 높았지만 검증 반쪽 확인에서는 이득이 없었으므로, 확실한 개선이라고 보기는 어려움. Round 3 stacking과는 같은 수준인데 모델 수가 더 적음(Round 4: GBM 회귀 1개 + conv+GRU 3개, Round 3: 분류 모델 5개 + GBM 회귀 + stacking 모델). 변동성 성능은 0.66 근처에서 정체된 것으로 보임.
+
+## 6. 재현
 
 ```bash
 cd src
@@ -67,4 +101,7 @@ python vol_v2.py E            # Round 2: 후보 선택 (검증)
 python vol_v2.py test         # Round 2: 테스트
 python vol_r3.py val          # Round 3: stacking 선택 (검증)
 python vol_r3.py test 4       # Round 3: 테스트
+python vol_r4.py train 0,1,2  # Round 4: conv+GRU 회귀 3시드
+python vol_r4.py val          # Round 4: 후보 선택 (검증)
+python vol_r4.py test 4       # Round 4: 테스트
 ```
