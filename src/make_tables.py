@@ -135,6 +135,11 @@ vr4 = {r['stage']: r for r in rd('vol_r4.jsonl')} if os.path.exists(os.path.join
 if 'test' in vr4 and not vr4['test'].get('skipped'):
     rows.append(['round 4', f"volatility only: GBM regression x {vr4['test']['w']} + conv+GRU regression x {round(1 - vr4['test']['w'], 2)}", na, na,
                  vr4['winner']['mF1'], vr4['test']['mF1']])
+vr5 = {r['stage']: r for r in rd('r5_combine.jsonl')} if os.path.exists(os.path.join(R, 'r5_combine.jsonl')) else {}
+if 'vol_test' in vr5 and not vr5['vol_test'].get('skipped'):
+    sp = vr5['vol_test']['spec']
+    rows.append(['round 5', f"volatility only: GBM regression x {sp['w']} + conv+GRU regression ({sp['src']}) x {round(1 - sp['w'], 2)}", na, na,
+                 vr5['winner']['mF1'], vr5['vol_test']['mF1']])
 write('15_two_tasks_summary.csv', ['round', 'method', 'direction_5s_val_mF1', 'direction_5s_test_mF1', 'volatility_60s_val_mF1', 'volatility_60s_test_mF1'], rows)
 
 # 12. CPU run vs Apple GPU (MPS) run of the MLPLOB / TLOB comparison (cpu_gpu.py, LOB_MODELS.md section 9)

@@ -11,3 +11,4 @@ MLPLOB / TLOB,"TLOB, 128 snapshots, 3 seeds (direction only)",0.5183,0.5094,,
 MLPLOB / TLOB,"conv+GRU reference, 3 seeds (same rows)",0.5152,0.5138,,
 round 3,stacking (best on VAL),0.5194,0.5185,0.6422,0.663
 round 4,volatility only: GBM regression x 0.8 + conv+GRU regression x 0.2,,,0.6415,0.6625
+round 5,volatility only: GBM regression x 0.7 + conv+GRU regression (vreg_mh) x 0.3,,,0.6423,0.6637
