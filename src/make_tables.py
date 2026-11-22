@@ -140,6 +140,11 @@ if 'vol_test' in vr5 and not vr5['vol_test'].get('skipped'):
     sp = vr5['vol_test']['spec']
     rows.append(['round 5', f"volatility only: GBM regression x {sp['w']} + conv+GRU regression ({sp['src']}) x {round(1 - sp['w'], 2)}", na, na,
                  vr5['winner']['mF1'], vr5['vol_test']['mF1']])
+vr7 = {r['stage']: r for r in rd('mkt_r7.jsonl')} if os.path.exists(os.path.join(R, 'mkt_r7.jsonl')) else {}
+if 'vol_test' in vr7 and not vr7['vol_test'].get('skipped'):
+    sp = vr7['vol_test']['spec']
+    rows.append(['round 7', f"volatility only: GBM regression with market-wide features x {sp['w']} + conv+GRU regression x {round(1 - sp['w'], 2)}",
+                 na, na, vr7['vol_winner']['mF1'], vr7['vol_test']['mF1']])
 write('15_two_tasks_summary.csv', ['round', 'method', 'direction_5s_val_mF1', 'direction_5s_test_mF1', 'volatility_60s_val_mF1', 'volatility_60s_test_mF1'], rows)
 
 # 12. CPU run vs Apple GPU (MPS) run of the MLPLOB / TLOB comparison (cpu_gpu.py, LOB_MODELS.md section 9)

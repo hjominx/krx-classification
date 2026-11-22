@@ -12,3 +12,4 @@ MLPLOB / TLOB,"conv+GRU reference, 3 seeds (same rows)",0.5152,0.5138,,
 round 3,stacking (best on VAL),0.5194,0.5185,0.6422,0.663
 round 4,volatility only: GBM regression x 0.8 + conv+GRU regression x 0.2,,,0.6415,0.6625
 round 5,volatility only: GBM regression x 0.7 + conv+GRU regression (vreg_mh) x 0.3,,,0.6423,0.6637
+round 7,volatility only: GBM regression with market-wide features x 0.9 + conv+GRU regression x 0.1,,,0.643,0.6637
