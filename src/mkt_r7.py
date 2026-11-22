@@ -111,3 +111,89 @@ if __name__ == '__main__':
         for n in sys.argv[2].split(','):
             if n in have: continue
             (fit_vol if n.startswith('vol') else fit_dir)(n, n.endswith('mkt'))
+
+
+WS = np.round(np.arange(0.1, 0.91, 0.1), 2); R2_THR = [2.0, 2.85]
+
+
+def vol_pool():
+    files = dict(new=[os.path.join(OUT, 'r7_val_vol_mkt.npz')], gbr=[os.path.join(OUT, 'vol_v2_val_gbr.npz')],
+                 cg=[os.path.join(OUT, f'r5_val_vreg_mh_s{s}_vol.npz') for s in range(5)])
+    Z = {n: [np.load(f) for f in fs] for n, fs in files.items()}; keys = None
+    for zs in Z.values():
+        for z in zs: k = R4.KEY(z['day'], z['row']); keys = k if keys is None else np.intersect1d(keys, k)
+    P, y = {}, None
+    for n, zs in Z.items():
+        q = []
+        for z in zs:
+            k = R4.KEY(z['day'], z['row']); ix = np.searchsorted(k, keys); assert (k[ix] == keys).all(); q.append(z['pred'][ix].astype(np.float64))
+            if y is None: y = z['y'][ix].astype(int)
+            else: assert (z['y'][ix] == y).all()
+        P[n] = np.mean(q, 0)
+    return P, y, keys
+
+
+def vol_cands(P, y, rows=None):
+    yy = y if rows is None else y[rows]; s = (lambda a: a) if rows is None else (lambda a: a[rows])
+    out = [(R4.mf1(yy, R4.by_thr(s(P['gbr']), R2_THR)), 'r2', dict(a='gbr', w=1.0, thr=R2_THR)),
+           (R4.mf1(yy, R4.by_thr(s(0.7 * P['gbr'] + 0.3 * P['cg']), R2_THR)), 'r5', dict(a='gbr', w=0.7, thr=R2_THR))]
+    f, t = R4.tune(P['new'], y, rows); out.append((f, 'mkt', dict(a='new', w=1.0, thr=t)))
+    for w in WS:
+        f, t = R4.tune(w * P['new'] + (1 - w) * P['cg'], y, rows); out.append((f, f'mkt+cg_{w}', dict(a='new', w=float(w), thr=t)))
+    return sorted(out, key=lambda c: -c[0])
+
+
+def vol_apply(sp, P): return R4.by_thr(sp['w'] * P[sp['a']] + (1 - sp['w']) * P['cg'], sp['thr'])
+
+
+def vol_val():
+    if not passed('vol'): log(dict(stage='vol_winner', skipped=True, why='vol_mkt did not beat vol_base and round 2 on VAL')); return
+    t0 = time.time(); P, y, keys = vol_pool(); d = keys // 1_000_000
+    log(dict(stage='vol_info', n_rows=int(len(y)), vol_mkt_val_all_rows=score('vol_mkt'), vol_base_val_all_rows=score('vol_base')))
+    C_ = vol_cands(P, y)
+    for f, nm, sp in C_: log(dict(stage='vol_cand', name=nm, mF1=round(f, 4), **sp))
+    f, nm, sp = C_[0]; p = vol_apply(sp, P)
+    log(dict(stage='vol_winner', name=nm, mF1=round(f, 4), **sp, acc=round(float(accuracy_score(y, p)), 4)))
+    days = np.unique(d); halves = (days[:len(days) // 2], days[len(days) // 2:])
+    for a_, b_ in ((0, 1), (1, 0)):
+        sel, ev = np.where(np.isin(d, halves[a_]))[0], np.isin(d, halves[b_])
+        f, nm, sp = vol_cands(P, y, sel)[0]; p = vol_apply(sp, P)
+        _, t2 = R4.tune(P['gbr'], y, sel); _, t5 = R4.tune(0.7 * P['gbr'] + 0.3 * P['cg'], y, sel)
+        log(dict(stage='vol_half', chosen_on=[int(x) for x in halves[a_]], chosen=nm, spec=sp, mF1_other_half=round(R4.mf1(y[ev], p[ev]), 4),
+                 r2_recipe_other_half=round(R4.mf1(y[ev], R4.by_thr(P['gbr'][ev], t2)), 4),
+                 r5_recipe_other_half=round(R4.mf1(y[ev], R4.by_thr((0.7 * P['gbr'] + 0.3 * P['cg'])[ev], t5)), 4)))
+    log(dict(stage='vol_val_done', sec=round(time.time() - t0)))
+
+
+def vol_test():
+    w = recs('vol_winner')
+    if not w or w[-1].get('skipped') or w[-1]['name'] in ('r2', 'r5'): log(dict(stage='vol_test', skipped=True, why='no round-7 winner on VAL')); return
+    import pickle
+    w = w[-1]; t0 = time.time(); g = pickle.load(open(os.path.join(OUT, 'r7_vol_mkt.pkl'), 'rb'))
+    Xte, rvt, yte, rte, dte = vol_stack(E.TE, True, eval_only=True)
+    new = next(p for it, p in enumerate(g['model'].staged_predict(Xte), 1) if it == g['best_iter']); kt = R4.KEY(dte, rte); del Xte
+    argv = sys.argv; sys.argv = argv[:1]; import r5_combine as RC; sys.argv = argv
+    cg, kc = RC.test_bag('vreg_mh') if w['w'] < 1.0 else (None, kt)
+    ref = {r: np.load(os.path.join(OUT, f)) for r, f in (('r2', 'vol_v2_test_train.npz'), ('r3', 'vol_r3_test.npz'), ('r4', 'vol_r4_test.npz'), ('r5', 'r5_vol_test.npz'))}
+    keys = np.intersect1d(kt, kc)
+    for z in ref.values(): keys = np.intersect1d(keys, R4.KEY(z['day'], z['row']))
+    ix = lambda k: np.searchsorted(k, keys); y = yte[ix(kt)]; d = keys // 1_000_000
+    x = w['w'] * new[ix(kt)] + ((1 - w['w']) * cg[ix(kc)] if cg is not None else 0.0); p = R4.by_thr(x, w['thr']); pr_ = {}
+    for r, z in ref.items():
+        i = ix(R4.KEY(z['day'], z['row'])); assert (z['y'][i] == y).all(); pr_[r] = z['pred'][i]
+    from sklearn.metrics import confusion_matrix
+    alone_thr = [c for c in recs('vol_cand') if c['name'] == 'mkt'][-1]['thr']
+    log(dict(stage='vol_test', pipeline=w['name'], spec={k: w[k] for k in ('a', 'w', 'thr')}, val_mF1=w['mF1'], n=int(len(y)),
+             mF1=round(R4.mf1(y, p), 4), acc=round(float(accuracy_score(y, p)), 4),
+             recall=[round(float(v), 4) for v in confusion_matrix(y, p, normalize='true').diagonal()],
+             mkt_gbm_alone_mF1=round(R4.mf1(y, R4.by_thr(new[ix(kt)], alone_thr)), 4),
+             **{f'{r}_mF1': round(R4.mf1(y, q), 4) for r, q in pr_.items()}, **{f'boot_new_minus_{r}': R4.boot(y, d, p, q) for r, q in pr_.items()},
+             days_better_than_r2=int(sum(R4.mf1(y[d == k], p[d == k]) > R4.mf1(y[d == k], pr_['r2'][d == k]) for k in np.unique(d))),
+             day_mF1={str(k): round(R4.mf1(y[d == k], p[d == k]), 4) for k in np.unique(d)}, confusion=confusion_matrix(y, p).tolist(),
+             sec=round(time.time() - t0)))
+    np.savez_compressed(os.path.join(OUT, 'r7_vol_test.npz'), x=x.astype(np.float32), pred=p, y=y, day=d, row=keys % 1_000_000)
+
+
+if __name__ == '__main__' and sys.argv[1] in ('vol_val', 'vol_test'):
+    if sys.argv[1] == 'vol_val' and not recs('vol_winner'): vol_val()
+    elif sys.argv[1] == 'vol_test' and not recs('vol_test'): vol_test()
