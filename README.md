@@ -58,6 +58,7 @@
 - 변동성 Round 4(conv+GRU를 회귀로 학습해 GBM 회귀와 섞음)는 Round 2보다 테스트 +0.0015로 유의하게 높았지만, 검증 반쪽 확인에서는 이득이 없었고 Round 3와는 차이가 없었음([`VOLATILITY.md`](VOLATILITY.md) 5절).
 - 변동성 Round 5(보조 정답으로 학습한 conv+GRU를 GBM 회귀와 섞음)가 테스트 최고(0.6637)임. Round 2·4보다 유의하게 높았지만 Round 3와는 차이가 없었고, 검증 반쪽 확인에서는 이득이 보이지 않았음([`VOLATILITY.md`](VOLATILITY.md) 6절).
 - 방향 분류에 피처 18개를 더하거나 변동성과 같이 학습시킨 시도(Round 5)는 검증셋에서 오히려 낮아서 테스트하지 않았음.
+- 변동성 GBM 회귀를 6가지로 바꿔 본 시도(Round 6: 피처 추가, Poisson 손실, 느린 학습, 학습 데이터 5배 등)는 모두 Round 2 GBM 회귀를 넘지 못했음([`VOLATILITY.md`](VOLATILITY.md) 7절).
 - MLPLOB·TLOB는 방향 분류에만 돌렸고 변동성 분류에는 돌리지 않았음.
 - 표는 `report/tables/15_two_tasks_summary.csv`(결과 파일에서 코드로 생성)와 같음. 아래 두 표는 Round 1 결과임.
 

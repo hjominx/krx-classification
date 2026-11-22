@@ -1,6 +1,6 @@
 # 변동성 분류(60초): 무엇을 어떻게 나누나
 
-이 프로젝트는 두 과제를 다룸. 숫자는 모두 `results/vol_cls.jsonl`, `results/vol_v2.jsonl`, `results/vol_r3.jsonl`, `results/vol_r4.jsonl`, `results/r5.jsonl`, `results/r5_combine.jsonl`, `results/r3_final.jsonl`에서 옮겼음.
+이 프로젝트는 두 과제를 다룸. 숫자는 모두 `results/vol_cls.jsonl`, `results/vol_v2.jsonl`, `results/vol_r3.jsonl`, `results/vol_r4.jsonl`, `results/r5.jsonl`, `results/r5_combine.jsonl`, `results/gbr_r6.jsonl`, `results/r3_final.jsonl`에서 옮겼음.
 
 | | 방향 분류 (5초) | 변동성 분류 (60초) |
 |---|---|---|
@@ -122,7 +122,24 @@ GPU가 있으면 자동으로 GPU를 쓰지만, 이번 실행은 CPU에서 했�
 - 정확도 0.6556, 재현율 잔잔 0.627 / 보통 0.663 / 격렬 0.692.
 - 해석: 테스트 최고 기록이지만 Round 3와의 차이는 유의하지 않고, 검증 반쪽 확인에서는 이득이 보이지 않았음. 같은 테스트셋을 다섯 번째로 쓴 결과라 실제 이득은 이보다 작을 수 있음. 모델은 GBM 회귀 1개 + conv+GRU 5개로, Round 3 stacking보다 단순함.
 
-## 7. 재현
+## 7. Round 6: GBM 회귀 개선 시도 (`gbr_r6.py`) - 효과 없음
+가장 강한 단일 모델인 Round 2 GBM 회귀(검증 0.6417)를 한 가지씩 바꿔 봤음. 설계는 실행 전에 고정했음. 트리 50개마다 검증 macro-F1(경계값은 검증셋에서 고름)을 보고 가장 좋은 트리 수를 골랐음.
+
+| 구성 | 바꾼 것 | 검증 macro-F1 | 최적 트리 수 |
+|---|---|---|---|
+| Round 2 (기준) | 145개 열, 학습률 0.05, 학습 행 10개 중 1개 | 0.6417 | 100 |
+| `lag` | 5·20스냅샷 전 대비 변화량 추가 (435개 열) | 0.6415 | 100 |
+| `past` | 직전 10·60·300초 움직임 합 3개 열 추가 | 0.6411 | 100 |
+| `poisson` | Poisson 손실 (움직임 합을 개수처럼 다룸) | 0.6411 | 100 |
+| `slow` | 학습률 0.02, 잎 15개, 정규화, 트리 최대 2,000개 | 0.6410 | 350 |
+| `sub2` | 학습 행 2개 중 1개 (5배, 196만 행) | 0.6408 | 100 |
+| `resid` | 직전 60초 대비 변화를 예측하고 직전 값을 더함 | 0.6392 | 150 |
+
+- 6개 모두 기준을 넘지 못해서, 미리 정한 규칙대로 합친 구성·결합·테스트는 하지 않았음.
+- 학습 데이터를 5배로 늘려도(`sub2`) 오르지 않았고, 거의 모든 구성이 트리 100개 근처에서 최고였음. 지금 피처로 GBM이 뽑을 수 있는 정보는 거의 다 뽑은 것으로 보임.
+- 학습 행을 바꾸기만 해도(`sub2`) 검증 점수가 0.001 가까이 움직였음. 그래서 검증셋에서 0.001 안팎의 차이(Round 4·5의 검증 이득 포함)는 잡음 수준으로 봐야 함.
+
+## 8. 재현
 
 ```bash
 cd src
@@ -145,4 +162,6 @@ python r5.py train vreg_mh,vreg_lr,vreg_reg,vreg_st2,joint,mt_allv 0,1   # Round
 python r5.py more              # Round 5: 통과한 구성의 시드 2~4
 python r5_combine.py vol_val   # Round 5: 결합 선택 (검증)
 python r5_combine.py vol_test  # Round 5: 테스트
+python gbr_r6.py fit past,resid,poisson,slow,lag,sub2   # Round 6: GBM 회귀 변형 (검증)
+python gbr_r6.py combo         # Round 6: 통과한 변화 합치기 (이번에는 해당 없음)
 ```
