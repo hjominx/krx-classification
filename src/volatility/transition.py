@@ -26,7 +26,9 @@ Measures
   CIs       : day-block bootstrap, 2,000 resamples (the same resamples for every forecast), 95%
 Shares, AUCs and intervals are stored with 6 decimals so that percentages can be rounded once for the tables.
 Added after the first run: AUC of each forecast minus that of the past-300 s RV (the strongest reference there), with the
-same resamples (stage auc_vs_past300).
+same resamples (stage auc_vs_past300). Then, VAL only (TEST kept for a rule that may be tested later), stage topk: within
+s = calm, ranked by the final forecast (r7), the share that turns turbulent among the top 0.1 / 0.5 / 1 / 2 / 5 / 10 / 20 %
+of rows and the share of all calm -> turbulent rows they hold; and the median forecast by the class of the next 60 s.
 usage: python transition.py   -> results/volatility/transition.jsonl (stages already in the file are skipped)
 """
 import _paths  # noqa: F401  (src/common, src/direction, src/volatility, src/report on the import path)
@@ -220,6 +222,19 @@ def vs_past300(split, A, names):
                  ci95=ci(np.array([auc_w(pt, w) for w in W]) - rb)))
 
 
+def topk(split, A, name, qs=(0.001, 0.005, 0.01, 0.02, 0.05, 0.10, 0.20)):
+    calm = A['s'] == 0; sc = A['score_' + name][calm]; y = A['y'][calm]; pos = y == 2; o = np.argsort(-sc, kind='stable')
+    top = []
+    for q in qs:
+        t = o[:int(round(q * len(sc)))]
+        top.append(dict(top_share=q, rows=int(len(t)), turbulent=round(float(pos[t].mean()), 6), normal_or_turbulent=round(float((y[t] >= 1).mean()), 6),
+                        share_of_calm_turb=round(float(pos[t].sum() / pos.sum()), 6), lowest_forecast=round(float(sc[t[-1]]), 4)))
+    med = [float(np.median(sc[y == c])) for c in range(3)]
+    log(dict(stage='topk', split=split, name=name, calm_rows=int(calm.sum()), base_rate=round(float(pos.mean()), 6), top=top,
+             median_forecast_by_next=[round(m, 4) for m in med], median_forecast_ticks_by_next=[round(float(np.expm1(m)), 2) for m in med],
+             above_2_85_by_next=[round(float((sc[y == c] > 2.85).mean()), 6) for c in range(3)]))
+
+
 if __name__ == '__main__':
     _, VA, TE = C.split_days(); have = {(r['stage'], r.get('split')) for r in recs()}
     if ('info', None) not in have: log(dict(stage='info', cuts=CUTS, fast10_ticks=round(FAST10, 4), n_boot=NB))
@@ -228,3 +243,4 @@ if __name__ == '__main__':
         names = ['persistence'] + (['r1_gru'] if 'r1_gru' in F else []) + [n for n in ('r2', 'r3', 'r4', 'r5', 'r7') if n in F]
         if ('auc', split) not in have: log(dict(stage='rows', split=split, **info, **ia)); run(split, A, names)
         if ('auc_vs_past300', split) not in have: vs_past300(split, A, names)
+        if split == 'val' and ('topk', split) not in have: topk(split, A, 'r7')
