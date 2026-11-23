@@ -1,14 +1,25 @@
 # raw and processed market data are not distributed
 data/*
 !data/README.md
-# large model outputs
-results/*.npz
-results/*.pt
-results/*.pkl
 *.log
 __pycache__/
 .ipynb_checkpoints/
-results_gpu/*.npz
-results_gpu/*.pt
-results/*.tmp
-results_gpu/*.tmp
+# working files of the experiments (model outputs with labels, checkpoints, temporary files)
+results/**/*.npz
+results/**/*.pt
+results/**/*.pkl
+results/**/*.tmp
+results_gpu/**/*.npz
+results_gpu/**/*.pt
+results_gpu/**/*.pkl
+results_gpu/**/*.tmp
+logs/
+# published: model weights (except the dropped MLPLOB / TLOB models) and the final predictions without labels
+!results/direction/*.pt
+!results/direction/*.pkl
+!results/volatility/*.pt
+!results/volatility/*.pkl
+results/direction/lob_*.pt
+results/**/*ckpt*.pt
+!results/direction/predictions/*.npz
+!results/volatility/predictions/*.npz

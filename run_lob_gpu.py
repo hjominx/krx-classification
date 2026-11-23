@@ -4,7 +4,7 @@ usage:  python run_lob_gpu.py <folder with the raw .jsonl.gz files>
 
 The raw folder may contain the order-book (H0STASP0) and trade (H0STCNT0) files in any sub-folders and under any names;
 each file is classified by its first record. Every step skips work that is already done, so the command can simply be
-run again after an interruption. Results go to results_gpu/ (kept apart from the CPU results in results/).
+run again after an interruption. Results go to results_gpu/direction/ (kept apart from the CPU results in results/direction/).
 Steps: 1 check GPU  2 raw -> per-day npz  3 features (book, trades, v2)  4 conv+GRU reference (3 seeds)
        5 MLPLOB / TLOB: screen (6 configs), 3-seed bag of the best, VAL comparison, TEST once
 """
@@ -18,7 +18,7 @@ ENV = dict(os.environ, KRX_RESULTS=RESULTS, PYTHONUNBUFFERED='1')
 def step(title): print(f'\n=== {title}  ({time.strftime("%H:%M:%S")})', flush=True)
 
 
-def py(args, cwd=SRC):
+def py(args, cwd=os.path.join(SRC, 'common')):
     print('  $ python', ' '.join(args), flush=True)
     r = subprocess.run([sys.executable] + args, cwd=cwd, env=ENV)
     if r.returncode: sys.exit(f'step failed: python {" ".join(args)}')
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     py(['deep_v2.py', 'base:0,base:1,base:2', '4'])
 
     step('5. MLPLOB / TLOB')
-    for stage in ('S', 'M', 'bagval', 'test'): py(['lob_models.py', stage])
-    print('\nresults:', os.path.join(RESULTS, 'lob_models.jsonl'))
-    for l in open(os.path.join(RESULTS, 'lob_models.jsonl')):
+    for stage in ('S', 'M', 'bagval', 'test'): py(['lob_models.py', stage], cwd=os.path.join(SRC, 'direction'))
+    print('\nresults:', os.path.join(RESULTS, 'direction', 'lob_models.jsonl'))
+    for l in open(os.path.join(RESULTS, 'direction', 'lob_models.jsonl')):
         r = json.loads(l); print('  ', {k: v for k, v in r.items() if k in ('stage', 'name', 'seed', 'device', 'val_mF1', 'bag_mF1', 'convgru_bag_mF1', 'mF1', 'boot_vs_convgru')})
