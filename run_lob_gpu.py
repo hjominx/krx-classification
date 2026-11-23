@@ -72,7 +72,7 @@ if __name__ == '__main__':
         else: print(f'  {sub}: {have} days already built')
 
     step('4. conv+GRU reference (same rules as the CPU run, seeds 0-2)')
-    py(['deep_v2.py', 'base:0,base:1,base:2', '4'])
+    py(['deep_v2.py', 'base:0,base:1,base:2', '4'], cwd=os.path.join(SRC, 'direction'))
 
     step('5. MLPLOB / TLOB')
     for stage in ('S', 'M', 'bagval', 'test'): py(['lob_models.py', stage], cwd=os.path.join(SRC, 'direction'))

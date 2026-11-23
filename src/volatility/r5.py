@@ -1,10 +1,11 @@
 """Round 5: conv+GRU with extra targets, regularisation and a joint model for both tasks. Design fixed before running;
 everything is chosen on VAL, TEST is read only in the final stages. Uses the GPU when present (CUDA or Apple MPS;
 env KRX_DEVICE=cpu|mps|cuda to force one); conv+GRU trains about 7x faster on an M1 Max GPU than on 2 CPU threads.
-Model : the conv+GRU of deep_v2.py (two 1D convolutions, GRU 64, EMA weights, 50 snapshots), inputs: the 145 'allv'
+Model : the conv+GRU of seq_models.py (two 1D convolutions, GRU 64, EMA weights, 50 snapshots), inputs: the 145 'allv'
         columns of vol_v2.py (they contain the 127 'full' columns used for direction so far), standardised with TRAIN
-        statistics, clipped to +-10. Budget and rules of deep_v2.py: up to 12 epochs x 200,000 windows, batch 256, after
-        each epoch VAL on every 10th VAL window, best epoch kept (raw or EMA weights), stop after 3 epochs without gain.
+        statistics, clipped to +-10. Budget and rules of round 2 (src/direction/deep_v2.py): up to 12 epochs x 200,000
+        windows, batch 256, after each epoch VAL on every 10th VAL window, best epoch kept (raw or EMA weights), stop
+        after 3 epochs without gain.
 Heads : direction - 5 horizons (1, 2, 5, 10, 30 s), class-balanced cross-entropy, 5 s main, others weight 0.5 in total
         volatility - log(1 + RV) of the next 60 s (main), and with 'mh' also of the next 10, 30, 120 s (weight 0.5 in
         total); each standardised with TRAIN statistics, mean squared error; classes from two thresholds chosen on VAL
@@ -19,21 +20,21 @@ Configs (all 'allv')
   mt_allv  : direction only (5 horizons) on allv - separates the effect of the inputs from that of the joint training
 Stage screen: every config, seeds 0 and 1. A config passes for a task if its seed-0/1 mean VAL macro-F1 beats
         volatility: round-4 conv+GRU regression seeds 0/1 (results/volatility/vol_r4.jsonl, mean 0.6328)
-        direction : mt seeds 0/1 of deep_v2.py (mean 0.5129)
+        direction : mt seeds 0/1 of round 2 (results/direction/v2_deep.jsonl, mean 0.5129)
 Stage more: passing configs get seeds 2, 3, 4 (5-seed bags).
 labels: builds the 10 / 30 / 120 s volatility labels (data/feat_vol_mh) and, where missing, the 60 s ones exactly as
         vol_cls.py (data/feat_vol); puts the class-cuts record next to the results so that vol_v2.py can run there.
 usage: python r5.py labels | train <cfg>[,<cfg>] <seed>[,<seed>] [threads] | more [threads]   -> results/volatility/r5.jsonl
-  env SMOKE=1 (deep_v2.py's switch): 1 epoch of 4,096 windows on 2 TRAIN days and 1 VAL day - a code check only
+  env SMOKE=1 (seq_models.py's switch): 1 epoch of 4,096 windows on 2 TRAIN days and 1 VAL day - a code check only
 """
 import _paths  # noqa: F401  (src/common, src/direction, src/volatility, src/report on the import path)
 import json, os, sys, time
 import numpy as np, torch, torch.nn as nn
 import common as C
-import exp_v2 as E
+import data_v2 as E
 
 argv = sys.argv; sys.argv = argv[:1]
-import deep_v2 as D
+import seq_models as D
 import vol_v2 as V
 import vol_r4 as R4
 sys.argv = argv

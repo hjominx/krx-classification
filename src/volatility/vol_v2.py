@@ -9,7 +9,7 @@ Stages
   B : allv without daylvl; allv without rvc and hist        (where the gain, if any, comes from)
   R : GBM regressor on log(1 + RV60) with allv; classes from two thresholds on the prediction chosen on VAL
   L : logistic regression on allv
-  G : conv+GRU with EMA on allv, seeds 0-2 (T = 50, budget of deep_v2.py)
+  G : conv+GRU with EMA on allv, seeds 0-2 (T = 50, round-2 budget of seq_models.py)
   E : candidates on VAL: every single model, the plain average of the classifier probabilities (GBM, logistic, GRU bag
       and their subsets) with a 'normal'-class multiplier from MS, and the regression rule. Best VAL macro-F1 wins.
   test : the winner on TEST once, trained on TRAIN (primary) and re-trained on TRAIN + VAL with frozen settings
@@ -23,7 +23,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier as HGB, HistGradient
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, accuracy_score, confusion_matrix
 import common as C
-import exp_v2 as E
+import data_v2 as E
 
 OUT = C.RES_VOL; os.makedirs(OUT, exist_ok=True); RES = os.path.join(OUT, 'vol_v2.jsonl'); VD = os.path.join(C.DATA, 'feat_vol')
 CUTS = [json.loads(l) for l in open(os.path.join(OUT, 'vol_cls.jsonl')) if '"labels"' in l][-1]['cuts']
@@ -94,7 +94,7 @@ def save_val(name, prob, y, d, r): np.savez_compressed(os.path.join(OUT, f'vol_v
 
 
 def _deep():
-    argv = sys.argv; sys.argv = argv[:1]; import deep_v2 as D; sys.argv = argv
+    import seq_models as D
     import torch; torch.set_num_threads(int(os.environ.get('OMP_NUM_THREADS', 2))); return D, torch
 
 

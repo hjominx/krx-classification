@@ -9,15 +9,9 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn.metrics import f1_score
 import common as C
+from plot_style import FIG, S1, S2, S3, S4, INK, INK2, GRID, SURF, SEQ  # noqa: F401  (palette and settings shared with src/volatility)
 
-R = C.RES_DIR; FIG = os.path.join(C.ROOT, 'figures'); os.makedirs(FIG, exist_ok=True)
-S1, S2, S3, S4 = '#2a78d6', '#eb6834', '#1baf7a', '#eda100'
-INK, INK2, GRID, SURF = '#0b0b0b', '#52514e', '#e4e3df', '#fcfcfb'
-SEQ = ['#cde2fb', '#9ec5f4', '#6da7ec', '#3987e5', '#256abf', '#184f95', '#0d366b']
-plt.rcParams.update({'figure.facecolor': SURF, 'axes.facecolor': SURF, 'axes.edgecolor': GRID, 'axes.labelcolor': INK2,
-                     'xtick.color': INK2, 'ytick.color': INK2, 'text.color': INK, 'axes.grid': True, 'grid.color': GRID,
-                     'grid.linewidth': 0.8, 'axes.spines.top': False, 'axes.spines.right': False, 'font.size': 11,
-                     'axes.titlesize': 13, 'axes.titleweight': 'bold', 'axes.titlelocation': 'left'})
+R = C.RES_DIR
 rd = lambda f: [json.loads(l) for l in open(os.path.join(R, f))] if os.path.exists(os.path.join(R, f)) else []
 
 

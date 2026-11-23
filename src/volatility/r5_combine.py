@@ -21,10 +21,10 @@ import json, os, sys, time
 import numpy as np, torch
 from sklearn.metrics import accuracy_score, confusion_matrix
 import common as C
-import exp_v2 as E
+import data_v2 as E
 
 argv = sys.argv; sys.argv = argv[:1]
-import deep_v2 as D
+import seq_models as D
 import vol_v2 as V
 import vol_r4 as R4
 import r5 as R5

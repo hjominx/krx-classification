@@ -23,7 +23,7 @@ import _paths  # noqa: F401  (src/common, src/direction, src/volatility, src/rep
 import json, os, sys, time
 import numpy as np
 import common as C
-import exp_v2 as E
+import data_v2 as E
 
 argv = sys.argv; sys.argv = argv[:1]
 import exec_sim as X

@@ -113,8 +113,9 @@
 preprocess/            원본 jsonl.gz -> 하루 단위 npz 변환 (손상된 gzip 복구 포함)
 src/
   common/              두 과제 공통: 데이터 경로·날짜 분할·피처·라벨 (common.py), 피처 캐시, 시장 피처,
-                       Round 2 GBM (exp_v2.py)과 딥러닝 (deep_v2.py; 변동성 코드도 이 모델과 로더를 씀)
-  direction/           방향 예측 (5초): Round 1 모델 선택·튜닝·백테스트, Round 2 결합, Round 3, MLPLOB·TLOB 비교, 그림
+                       v2 피처 열·불러오기·GBM 설정 (data_v2.py), conv+GRU 등 시계열 모델 (seq_models.py), 그림 스타일
+  direction/           방향 예측 (5초): Round 1 모델 선택·튜닝·백테스트, Round 2 (exp_v2.py, deep_v2.py, 결합), Round 3,
+                       MLPLOB·TLOB 비교, 그림
   volatility/          변동성 예측 (60초): vol_cls.py, Round 2~7 (vol_v2.py ... mkt_r7.py), 체결 비용 시뮬레이션, 그림
   report/              두 과제의 결과 파일로 요약 표(CSV) 생성 (make_tables.py)
 results/
@@ -132,6 +133,7 @@ run_all.sh             Round 1 전체 실행 순서
 ```
 
 - 각 코드 폴더의 `_paths.py`가 네 폴더를 모두 불러오기 경로에 넣어 줘서, 다른 폴더의 모듈도 그대로 불러올 수 있음.
+- 방향 코드와 변동성 코드는 서로 불러오지 않고 `src/common/`만 함께 씀(Round 5 선별이 방향 기준점으로 `results/direction/v2_deep.jsonl`을 읽는 것만 예외).
 - 모델 가중치와 예측은 각 결과 폴더의 `README.md`에 파일별로 설명했음. 예측 파일에는 원본 데이터에서 만든 정답 라벨(`y`)을 넣지 않았음.
 
 ## 실행

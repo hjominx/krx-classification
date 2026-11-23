@@ -1,8 +1,8 @@
 import _paths  # noqa: F401  (src/common, src/direction, src/volatility, src/report on the import path)
 import os
-import sys, numpy as np, matplotlib; matplotlib.use('Agg')
-sys.argv = ['plots.py']
-exec(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'direction', 'plots.py')).read().split('\ndef ')[0])  # style header only
+import numpy as np, matplotlib; matplotlib.use('Agg')
+import common as C
+from plot_style import S1, INK  # palette and matplotlib settings shared with src/direction
 import matplotlib.pyplot as plt
 z = np.load(os.path.join(C.RES_VOL, 'test_pred_vol_gru.npz')); y, p = z['y'], z['prob'].argmax(1)
 cm = np.array([[np.mean(p[y == i] == j) for j in range(3)] for i in range(3)])

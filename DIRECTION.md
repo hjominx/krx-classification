@@ -5,7 +5,7 @@
 
 | 구분 | 위치 |
 |---|---|
-| 코드 | `src/direction/` (과제 전용), `src/common/` (두 과제 공통: 데이터·피처, Round 2 GBM `exp_v2.py`와 딥러닝 `deep_v2.py`) |
+| 코드 | `src/direction/` (과제 전용, Round 2 GBM `exp_v2.py`와 딥러닝 `deep_v2.py` 포함), `src/common/` (두 과제 공통: 데이터·피처, `data_v2.py`, `seq_models.py`) |
 | 결과 기록 | `results/direction/*.jsonl` (파일별 설명: [`results/direction/README.md`](results/direction/README.md)) |
 | 모델 가중치 | `results/direction/*.pt`, `*.pkl` (MLPLOB·TLOB 제외) |
 | 최종 예측 (정답 라벨 제외) | `results/direction/predictions/` |
@@ -27,7 +27,7 @@
 - 가장 좋은 것은 Round 3 stacking임. Round 2보다 테스트 +0.0014, 날짜 단위 부트스트랩 95% 구간 [+0.0002, +0.0027]로 유의했음.
 - 같은 테스트 10일을 여러 라운드에서 썼으므로 테스트 점수는 다소 낙관적일 수 있음.
 
-## 2. Round 2 요약 (`src/common/exp_v2.py`, `src/common/deep_v2.py`, `src/direction/ens_v2.py`, `src/direction/final_v2.py`)
+## 2. Round 2 요약 (`src/direction/exp_v2.py`, `deep_v2.py`, `ens_v2.py`, `final_v2.py`)
 - 피처를 127개로 늘리고, GBM(학습률 0.02, 잎 15개, 잎당 최소 100행)과 딥러닝 여러 구성(conv+GRU `base`, 보조 정답 `mt`, `tcn` 등)을 검증셋에서 비교했음.
 - 결합 우승은 GBM + `mt` 5시드 + `tcn` 5시드의 확률 평균에 보합 배수 1.1을 곱한 것임(검증 0.5179).
 - 반반 검증(6일로 고르고 나머지 6일로 평가)에서도 같은 조합이 뽑혔고, 나머지 반쪽에서 0.5187 / 0.5169였음.
@@ -44,12 +44,13 @@ cd src/common
 python build_features.py            # 호가 피처·라벨 (두 과제 공통)
 python trade_features.py            # 체결 피처
 python features_v2.py               # Round 2 피처
+cd ../direction
 python exp_v2.py A B C T L P        # Round 2 GBM·로지스틱 (검증)
 python deep_v2.py D1                # Round 2 딥러닝, 구성별 시드 0·1
 python deep_v2.py D2                # 상위 3개 구성의 시드 2~4
-cd ../direction
 python ens_v2.py                    # Round 2 결합 선택 (검증)
 python final_v2.py primary          # Round 2 테스트
 ```
 - Round 1은 [`run_all.sh`](run_all.sh), Round 3은 [`ROUND3.md`](ROUND3.md) 8절, MLPLOB·TLOB는 [`LOB_MODELS.md`](LOB_MODELS.md) 7절에 재현 순서가 있음.
 - 모든 스크립트는 이미 끝난 작업을 건너뛰고, 결과를 `results/direction/`에 이어 씀.
+- 방향 코드는 변동성 코드를 불러오지 않고 `src/common/`만 씀. `exp_v2.py`와 `deep_v2.py`는 Round 2 실험 단계만 담고, 변동성 코드와 함께 쓰는 부분(피처 열·불러오기·GBM 설정, conv+GRU 등 모델과 학습 예산)은 `src/common/data_v2.py`, `src/common/seq_models.py`에서 가져옴.

@@ -31,7 +31,7 @@ import numpy as np
 from sklearn.ensemble import HistGradientBoostingClassifier as HGB
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix
-import exp_v2 as E
+import data_v2 as E
 
 argv = sys.argv; sys.argv = argv[:1]
 import vol_v2 as V

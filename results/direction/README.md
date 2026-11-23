@@ -10,7 +10,7 @@
 | Round 1: conv+GRU 튜닝·보정·긴 학습 | `tune_gru.jsonl`, `tune_gru_final.jsonl`, `gru_flat.jsonl`, `gru_full.jsonl` | `tune_gru.py`, `gru_flat.py`, `gru_full.py` |
 | Round 1: 개선 시도, 체결 데이터, 원시 호가 | `ensemble.jsonl`, `norm_wf.jsonl`, `norm_diag.jsonl`, `trades.jsonl`, `gru_tr.jsonl`, `raw_cmp.jsonl`, `cross.jsonl` | `ensemble.py`, `norm_wf.py`, `norm_diag.py`, `exp_trades.py`, `gru_tr.py`, `raw_cmp.py`, `cross_venue.py` |
 | Round 1: 다음 변화 방향, 확신할 때만 답하기, 백테스트 | `next_move.jsonl`, `next_move_sel.jsonl`, `next_move_tr.jsonl`, `backtest.jsonl`, `swing.jsonl` | `next_move*.py`, `backtest.py`, `swing.py` |
-| Round 2: 피처 127개, GBM·딥러닝·결합 | `v2.jsonl`, `v2_deep.jsonl`, `v2_ens.jsonl`, `v2_final.jsonl` | `src/common/exp_v2.py`, `src/common/deep_v2.py`, `ens_v2.py`, `final_v2.py` |
+| Round 2: 피처 127개, GBM·딥러닝·결합 | `v2.jsonl`, `v2_deep.jsonl`, `v2_ens.jsonl`, `v2_final.jsonl` | `exp_v2.py`, `deep_v2.py`, `ens_v2.py`, `final_v2.py` |
 | Round 3: 시드 추가, 학습 변형, stacking | `r3_deep.jsonl`, `r3_gbm.jsonl`, `r3_post.jsonl`, `r3_check.jsonl`, `r3_final.jsonl`, `r3_cost.jsonl` | `deep_r3.py`, `gbm_r3.py`, `post_r3.py`, `check_r3.py`, `final_r3.py`, `cost_r3.py` |
 | MLPLOB·TLOB 비교 (중단한 방향) | `lob_models.jsonl`, `lob_cost.jsonl`, `cpu_gpu.jsonl` | `lob_models.py`, `lob_cost.py`, `cpu_gpu.py` |
 
@@ -21,7 +21,7 @@
 
 | 파일 | 내용 | 불러오는 코드 |
 |---|---|---|
-| `v2_deep_<구성>_s<시드>.pt` | Round 2 딥러닝 (conv+GRU, `mt`, `tcn` 등) | `src/common/deep_v2.py`의 `make()` |
+| `v2_deep_<구성>_s<시드>.pt` | Round 2 딥러닝 (conv+GRU, `mt`, `tcn` 등) | `src/common/seq_models.py`의 `make()` |
 | `r3_deep_<구성>_s<시드>.pt` | Round 3 딥러닝 (시드 5~9, `mt_st2` 등) | `src/direction/deep_r3.py`, `final_r3.py` |
 | `r3_gbm_<구성>.pkl` | Round 3 GBM (`lag`, `rec`) | `src/direction/gbm_r3.py`, `final_r3.py` |
 

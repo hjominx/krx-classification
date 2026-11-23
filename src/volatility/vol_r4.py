@@ -21,17 +21,17 @@ TEST  : once. conv+GRU from the saved checkpoints; GBM refitted on TRAIN with it
         (results/volatility/vol_r3_test.npz); day-block bootstrap (2,000 resamples) of the macro-F1 differences.
 Note: the TEST days were already used by vol_cls.py, vol_v2.py and vol_r3.py, so they are not an untouched hold-out.
 usage: python vol_r4.py train <seed>[,<seed>...] [threads] | val | test [threads]   -> results/volatility/vol_r4.jsonl
-  env SMOKE=1 (deep_v2.py's switch): 1 epoch of 4,096 windows on 2 TRAIN days and 1 VAL day - a code check only
+  env SMOKE=1 (seq_models.py's switch): 1 epoch of 4,096 windows on 2 TRAIN days and 1 VAL day - a code check only
 """
 import _paths  # noqa: F401  (src/common, src/direction, src/volatility, src/report on the import path)
 import json, os, sys, time
 import numpy as np, torch, torch.nn as nn
 from sklearn.metrics import accuracy_score, confusion_matrix
 import common as C
-import exp_v2 as E
+import data_v2 as E
 
 argv = sys.argv; sys.argv = argv[:1]
-import deep_v2 as D
+import seq_models as D
 import vol_v2 as V
 sys.argv = argv
 OUT = C.RES_VOL; os.makedirs(OUT, exist_ok=True); RES = os.path.join(OUT, 'vol_r4.jsonl'); VD = os.path.join(C.DATA, 'feat_vol'); T = D.T

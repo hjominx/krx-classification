@@ -324,3 +324,5 @@ python mkt_r7.py vol_test      # Round 7: 테스트
 python exec_sim.py             # 큰 매수 주문 나눠 내기 시뮬레이션 (테스트 10일)
 python exec_sim2.py            # 개선 규칙: 검증 12일에서 고르고 테스트 10일에서 확인
 ```
+- 먼저 `src/common`에서 `build_features.py`, `trade_features.py`, `features_v2.py`로 피처를 만들어야 함(두 과제 공통, [`DIRECTION.md`](DIRECTION.md) 4절).
+- 변동성 코드는 방향 코드를 불러오지 않고 `src/common`의 `data_v2.py`(피처 열·불러오기·GBM 설정)와 `seq_models.py`(conv+GRU)만 씀. Round 5 선별의 방향 기준점만 `results/direction/v2_deep.jsonl`을 읽음.
