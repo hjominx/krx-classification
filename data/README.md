@@ -8,11 +8,11 @@
 | `data/krx_trades_raw/` | KIS H0STCNT0(체결) 원본 `YYYY-MM-DD.jsonl.gz` | 직접 수집 |
 | `data/krx_npz/KRX_YYYYMMDD.npz` | 하루 단위 호가 배열 | `preprocess/convert_krx.py` |
 | `data/krx_trades/YYYYMMDD.npz` | 하루 단위 체결 배열 | `preprocess/convert_trades.py` |
-| `data/feat/`, `data/feat_tr/`, `data/feat_vol/` | 피처·라벨 캐시 | `src/build_features.py`, `src/trade_features.py`, `src/vol_cls.py labels` |
+| `data/feat/`, `data/feat_tr/`, `data/feat_vol/` | 피처·라벨 캐시 | `src/common/build_features.py`, `src/common/trade_features.py`, `src/volatility/vol_cls.py labels` |
 | `data/hl_npz/` | (선택) Hyperliquid 호가, 교차시장·갭 실험에만 사용 | `preprocess/convert.py` |
-| `data/feat_vol_mh/` | 10·30·120초 변동성 정답 (Round 5) | `src/r5.py labels` |
-| `data/market/` | 공개 시장 데이터: Yahoo Finance 시간봉·일봉 JSON (Round 7) | `src/market_feat.py fetch` |
-| `data/feat_mkt/` | 시장 전체 정보 피처 24개 (Round 7) | `src/market_feat.py build` |
+| `data/feat_vol_mh/` | 10·30·120초 변동성 정답 (Round 5) | `src/volatility/r5.py labels` |
+| `data/market/` | 공개 시장 데이터: Yahoo Finance 시간봉·일봉 JSON (Round 7) | `src/common/market_feat.py fetch` |
+| `data/feat_mkt/` | 시장 전체 정보 피처 24개 (Round 7) | `src/common/market_feat.py build` |
 
 ## 원본 형식
 

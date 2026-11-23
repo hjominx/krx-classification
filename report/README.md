@@ -13,7 +13,7 @@
 
 ## 2. 결과 표 (`tables/`)
 
-`src/make_tables.py`가 `results/*.jsonl`에서 만든 CSV임. 엑셀에서 바로 열 수 있음(UTF-8 BOM).
+`src/report/make_tables.py`가 `results/direction/*.jsonl`에서 만든 CSV임. 엑셀에서 바로 열 수 있음(UTF-8 BOM).
 
 | 파일 | 내용 | 데이터 구간 |
 |---|---|---|
@@ -90,15 +90,17 @@
 ## 다시 만들기
 
 ```bash
-cd src
-python make_tables.py   # report/tables/*.csv
-python plots.py         # figures/*.png
-python plot_vol.py
-python plot_full.py
-python lob_cost.py     # results/lob_cost.jsonl (예측 시간은 측정할 때마다 조금씩 다름)
-python plot_lob.py     # figures/20~23_lob_*.png
-python cpu_gpu.py records   # results/cpu_gpu.jsonl (same, speed 단계는 LOB_MODELS.md 9.8절 참고)
-python plot_cpu_gpu.py      # figures/24~26_cpu_gpu_*.png
+cd src/report
+python make_tables.py        # report/tables/*.csv (두 과제)
+cd ../direction
+python plots.py              # figures/01~17
+python plot_full.py          # figures/19
+python lob_cost.py           # results/direction/lob_cost.jsonl (예측 시간은 측정할 때마다 조금씩 다름)
+python plot_lob.py           # figures/20~23_lob_*.png
+python cpu_gpu.py records    # results/direction/cpu_gpu.jsonl (same, speed 단계는 LOB_MODELS.md 9.8절 참고)
+python plot_cpu_gpu.py       # figures/24~26_cpu_gpu_*.png
+cd ../volatility
+python plot_vol.py           # figures/18
 ```
 
 MLPLOB·TLOB 비교의 자세한 설명은 [`../LOB_MODELS.md`](../LOB_MODELS.md)에, CPU 실행과 Apple GPU 실행의 비교는 같은 문서 9절에 있음.

@@ -1,6 +1,6 @@
 # SK하이닉스(000660) KRX 호가 데이터 분류: 결과 정리
 
-모든 숫자는 `results/*.jsonl`에서 그대로 옮겼음. 그래프는 `figures/`에 있고 `python3 plots.py`로 다시 만들 수 있음.
+모든 숫자는 `results/direction/*.jsonl`에서 그대로 옮겼음. 그래프는 `figures/`에 있고 `python3 plots.py`로 다시 만들 수 있음.
 
 ## 1. 데이터 수집 방법
 - 출처: 직접 수집한 한국투자증권 WebSocket 실시간 호가(H0STASP0), 매도·매수 각 10호가 가격과 잔량, 총잔량, 누적거래량.

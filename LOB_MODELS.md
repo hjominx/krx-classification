@@ -2,10 +2,10 @@
 
 이 문서는 **방향 분류(5초 뒤 상승 / 보합 / 하락)만** 다룸. MLPLOB·TLOB는 변동성 분류에는 돌리지 않았음. 두 과제의 전체 비교는 [`README.md`](README.md)의 "두 과제 전체 비교"에 있음.
 
-모든 숫자는 `results/lob_models.jsonl`, `results/v2_deep.jsonl`, `results/raw_cmp.jsonl`, `results/lob_cost.jsonl`에서 그대로 옮겼음.
-GPU 재실행 결과(9절)는 `results_gpu/lob_models.jsonl`, `results_gpu/v2_deep.jsonl`에서 옮겼음. CPU 실행과의 추가 비교(9.4~9.6절)는 `src/cpu_gpu.py`가 만든 `results/cpu_gpu.jsonl`에서 옮겼음.
-연산량과 예측 시간은 `src/lob_cost.py`로 측정했음(아래 4절). 그림과 표는 8절에 있음.
-코드는 `src/lob_models.py`이고, 모델은 논문 *TLOB: A Novel Transformer Model with Dual Attention for Price Trend Prediction
+모든 숫자는 `results/direction/lob_models.jsonl`, `results/direction/v2_deep.jsonl`, `results/direction/raw_cmp.jsonl`, `results/direction/lob_cost.jsonl`에서 그대로 옮겼음.
+GPU 재실행 결과(9절)는 `results_gpu/direction/lob_models.jsonl`, `results_gpu/direction/v2_deep.jsonl`에서 옮겼음. CPU 실행과의 추가 비교(9.4~9.6절)는 `src/direction/cpu_gpu.py`가 만든 `results/direction/cpu_gpu.jsonl`에서 옮겼음.
+연산량과 예측 시간은 `src/direction/lob_cost.py`로 측정했음(아래 4절). 그림과 표는 8절에 있음.
+코드는 `src/direction/lob_models.py`이고, 모델은 논문 *TLOB: A Novel Transformer Model with Dual Attention for Price Trend Prediction
 with Limit Order Book Data*(Berti & Kasneci, arXiv:2502.15757)의 설명을 보고 다시 구현했음.
 
 ## 1. 결론
@@ -109,13 +109,13 @@ with Limit Order Book Data*(Berti & Kasneci, arXiv:2502.15757)의 설명을 보�
 ## 7. 재현
 
 ```bash
-cd src
+cd src/direction
 python lob_models.py S        # 6개 구성, 시드 0 (검증셋)
 python lob_models.py M        # 검증셋 최고 'full' 구성의 시드 1, 2
 python lob_models.py bagval   # 시드 3개 평균 vs conv+GRU, 검증셋
 python lob_models.py test     # 테스트셋 1회
-python lob_cost.py            # 파라미터·연산량·예측 시간 -> results/lob_cost.jsonl
-python make_tables.py         # report/tables/12~14_lob_models_*.csv (다른 표도 함께 다시 만듦)
+python lob_cost.py            # 파라미터·연산량·예측 시간 -> results/direction/lob_cost.jsonl
+python ../report/make_tables.py   # report/tables/12~14_lob_models_*.csv (다른 표도 함께 다시 만듦)
 python plot_lob.py            # figures/20~23_lob_*.png
 ```
 
@@ -124,7 +124,7 @@ python run_lob_gpu.py <원시 .jsonl.gz 폴더>   # GPU 노트북에서 데이�
 ```
 
 - 각 단계는 이미 끝난 작업을 건너뛰고, 학습은 epoch마다 저장한 지점부터 이어서 함.
-- 결과는 `results/lob_models.jsonl`(GPU 실행은 `results_gpu/`)에 쌓임.
+- 결과는 `results/direction/lob_models.jsonl`(GPU 실행은 `results_gpu/direction/`)에 쌓임.
 
 ## 8. 그림과 표
 
@@ -146,9 +146,9 @@ python run_lob_gpu.py <원시 .jsonl.gz 폴더>   # GPU 노트북에서 데이�
 | `report/tables/13_lob_models_val_test.csv` | 시드별·평균 검증/테스트 macro-F1과 부트스트랩 구간 |
 | `report/tables/14_lob_models_cost.csv` | 파라미터, 연산량, 예측 시간, 학습 시간 |
 
-- 학습한 가중치(`results/lob_*.pt`)와 예측 확률(`results/lob_*.npz`)은 데이터에서 만든 파일이라 저장소에 올리지 않았음.
+- 학습한 가중치(`results/direction/lob_*.pt`)와 예측 확률(`results/direction/lob_*.npz`)은 데이터에서 만든 파일이라 저장소에 올리지 않았음.
 
-## 9. GPU 재실행 (Apple M1 Max, `results_gpu/`)
+## 9. GPU 재실행 (Apple M1 Max, `results_gpu/direction/`)
 - `run_lob_gpu.py`로 원시 데이터 변환부터 테스트까지 처음부터 다시 돌렸음. 코드, 설정, 시드는 CPU 실행과 같음.
 - MLPLOB·TLOB는 Apple GPU(MPS)에서, 기준 모델 conv+GRU(시드 0~2)는 같은 노트북의 CPU에서 학습했음.
 
@@ -164,7 +164,7 @@ python run_lob_gpu.py <원시 .jsonl.gz 폴더>   # GPU 노트북에서 데이�
 
 - GPU에서도 `full` 구성 중 검증 최고는 TLOB 128스냅샷이라, 같은 구성으로 시드 1, 2를 추가했음(GPU 0.5124 / 0.5134, CPU 0.5124 / 0.5131).
 - GPU와 CPU는 dropout 난수와 계산 순서가 달라 같은 시드라도 값이 조금씩 다름(−0.0012~+0.0024, 9.5절). 가장 큰 차이는 MLPLOB 128스냅샷으로, 최적 epoch도 CPU 2번째, GPU 10번째로 달랐음.
-- conv+GRU 시드 0~2의 검증 값은 CPU 실행(`results/v2_deep.jsonl`)과 정확히 같았음(0.5132 / 0.5107 / 0.5103).
+- conv+GRU 시드 0~2의 검증 값은 CPU 실행(`results/direction/v2_deep.jsonl`)과 정확히 같았음(0.5132 / 0.5107 / 0.5103).
 
 ### 9.2 시드 3개 평균 예측
 | | CPU 실행 | GPU 실행 |
@@ -249,12 +249,12 @@ CPU 실행의 가중치는 이 노트북에 없어서 GPU 실행의 가중치만
 ### 9.8 재현
 
 ```bash
-python run_lob_gpu.py <원시 .jsonl.gz 폴더>   # GPU 실행 -> results_gpu/
-cd src
+python run_lob_gpu.py <원시 .jsonl.gz 폴더>   # GPU 실행 -> results_gpu/direction/
+cd src/direction
 python cpu_gpu.py records   # 두 실행의 결과 기록 비교
 python cpu_gpu.py same      # 같은 가중치로 CPU / GPU 예측 비교 (GPU 실행의 가중치와 데이터 필요)
 python cpu_gpu.py speed     # 같은 노트북에서 학습·예측 시간 (Apple GPU 필요)
-python make_tables.py       # report/tables/16~19_cpu_gpu_*.csv (다른 표도 함께 다시 만듦)
+python ../report/make_tables.py   # report/tables/16~19_cpu_gpu_*.csv (다른 표도 함께 다시 만듦)
 python plot_cpu_gpu.py      # figures/24~26_cpu_gpu_*.png
 ```
 
@@ -275,4 +275,4 @@ python plot_cpu_gpu.py      # figures/24~26_cpu_gpu_*.png
 | `report/tables/17_cpu_gpu_val_test.csv` | 고른 구성, 시드별·평균 검증/테스트 macro-F1, 부트스트랩 구간, 클래스별 재현율·예측 비율, 날짜별 최대 차이 |
 | `report/tables/18_cpu_gpu_same_weights.csv` | 같은 가중치로 CPU / GPU 예측할 때 확률 차이, 바뀐 예측 수, macro-F1 |
 | `report/tables/19_cpu_gpu_speed.csv` | 학습 1 step, 예측 256개 시간(CPU 2스레드 / GPU)과 배수 |
-| `results/cpu_gpu.jsonl` | 위 표와 그림의 비교 숫자 |
+| `results/direction/cpu_gpu.jsonl` | 위 표와 그림의 비교 숫자 |

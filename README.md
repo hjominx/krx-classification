@@ -2,10 +2,17 @@
 
 직접 수집한 KRX 실시간 호가·체결 데이터로 **다음 순간의 시장 상태를 분류하는 모델**을 학습하고 평가한 딥러닝 기말 프로젝트임.
 
-- **방향 분류:** 5초 뒤 중간가가 상승 / 보합 / 하락 중 무엇일지
-- **변동성 분류:** 다음 60초 동안 가격이 잔잔 / 보통 / 격렬 중 어떻게 움직일지
+두 과제를 따로 다루고, 코드·결과·문서도 과제별로 나눴음.
 
-변동성 분류의 정답을 만드는 방법과 클래스 경계, 결과는 [`VOLATILITY.md`](VOLATILITY.md)에 정리했음.
+| | 방향 예측 | 변동성 예측 |
+|---|---|---|
+| 질문 | 5초 뒤 중간가가 상승 / 보합 / 하락 중 무엇일지 | 다음 60초 동안 가격이 잔잔 / 보통 / 격렬 중 어떻게 움직일지 |
+| 최고 테스트 macro-F1 | 0.5185 (Round 3, 무작위 약 0.33) | 0.6637 (Round 5·7, 직전 60초 상태 그대로 0.6006) |
+| 문서 | [`DIRECTION.md`](DIRECTION.md) | [`VOLATILITY.md`](VOLATILITY.md) |
+| 코드 | `src/direction/` | `src/volatility/` |
+| 결과·가중치·예측 | `results/direction/` | `results/volatility/` |
+
+두 과제가 함께 쓰는 데이터·피처 코드는 `src/common/`에 있음.
 
 ## 데이터
 
@@ -93,7 +100,7 @@
 - 모델이 확신할 때만 답하면 다음 가격 변화 방향을 상위 약 4%에서 0.87 적중했음.
 - 수수료·세금·스프레드를 넣은 백테스트는 모든 전략이 손실이었음.
 
-전체 결과와 부록 실험은 [`RESULTS.md`](RESULTS.md)에, MLPLOB·TLOB 비교와 CPU / Apple GPU 실행 비교는 [`LOB_MODELS.md`](LOB_MODELS.md)에, Round 3 성능 개선 시도(방향 테스트 0.5185, Round 2 대비 +0.0014; 변동성 stacking 0.6630, 유의하지 않음)는 [`ROUND3.md`](ROUND3.md)에, 발표 자료·결과 표·그래프 목록은 [`report/`](report/README.md)에 정리했음.
+방향 예측은 [`DIRECTION.md`](DIRECTION.md)(Round 1은 [`RESULTS.md`](RESULTS.md), Round 3은 [`ROUND3.md`](ROUND3.md), MLPLOB·TLOB 비교는 [`LOB_MODELS.md`](LOB_MODELS.md))에, 변동성 예측은 [`VOLATILITY.md`](VOLATILITY.md)에, 발표 자료·결과 표·그래프 목록은 [`report/`](report/README.md)에 정리했음.
 
 <p align="center">
   <img src="figures/18_vol_confusion.png" width="420">
@@ -103,35 +110,29 @@
 ## 저장소 구조
 
 ```
-preprocess/   원본 jsonl.gz -> 하루 단위 npz 변환 (손상된 gzip 복구 포함)
-src/          피처 생성, 모델 학습·평가, 그림
-  common.py           데이터 경로, 날짜 분할, 피처·라벨 정의
-  build_features.py   호가 피처·라벨 캐시
-  trade_features.py   체결 피처 (각 호가 시점 이전 체결만 사용)
-  select_models.py    검증셋에서 모델·설정·피처 선택
-  final_eval.py       로지스틱·GBM 테스트 평가
-  deep.py             conv+GRU, DeepLOB
-  tune_gru.py         GRU 하이퍼파라미터 실험
-  gru_full.py         전체 데이터로 충분히 학습
-  gru_flat.py         보합 확률 보정
-  vol_cls.py          변동성 분류
-  raw_cmp.py          원시 호가 입력 비교 + bootstrap
-  next_move*.py       다음 가격 변화 방향, 확신 기반 판정
-  backtest.py, swing.py  비용을 넣은 백테스트
-  plots.py ...        결과 파일에서 그림 생성
-  make_tables.py      결과 파일에서 요약 표(CSV) 생성
-  lob_models.py       MLPLOB·TLOB 학습·비교 (lob_cost.py: 비용 측정, plot_lob.py: 그림)
-  cpu_gpu.py          CPU 실행과 Apple GPU 실행 비교 (plot_cpu_gpu.py: 그림)
-results/      실험 결과 (JSON Lines)
-results_gpu/  Apple GPU(MPS) 실행 결과 (run_lob_gpu.py)
-report/       발표 자료, 결과 표(CSV), 결과물 설명
-figures/      발표용 그림
-RESULTS.md    전체 결과 정리
-LOB_MODELS.md MLPLOB·TLOB와 conv+GRU 비교
-ROUND3.md     Round 3: 시드 추가, 학습 변형, stacking (방향·변동성)
-VOLATILITY.md 변동성 분류(60초): 정답 정의, 클래스 경계, 결과
-run_all.sh    전체 파이프라인 실행 순서
+preprocess/            원본 jsonl.gz -> 하루 단위 npz 변환 (손상된 gzip 복구 포함)
+src/
+  common/              두 과제 공통: 데이터 경로·날짜 분할·피처·라벨 (common.py), 피처 캐시, 시장 피처,
+                       Round 2 GBM (exp_v2.py)과 딥러닝 (deep_v2.py; 변동성 코드도 이 모델과 로더를 씀)
+  direction/           방향 예측 (5초): Round 1 모델 선택·튜닝·백테스트, Round 2 결합, Round 3, MLPLOB·TLOB 비교, 그림
+  volatility/          변동성 예측 (60초): vol_cls.py, Round 2~7 (vol_v2.py ... mkt_r7.py), 체결 비용 시뮬레이션, 그림
+  report/              두 과제의 결과 파일로 요약 표(CSV) 생성 (make_tables.py)
+results/
+  direction/           방향: 결과 기록(.jsonl), 모델 가중치(.pt, .pkl), predictions/ (정답 라벨을 뺀 최종 예측)
+  volatility/          변동성: 같은 구성
+results_gpu/direction/ Apple GPU(MPS)로 다시 돌린 MLPLOB·TLOB 비교 (run_lob_gpu.py)
+report/                발표 자료, 결과 표(CSV), 결과물 설명
+figures/               발표용 그림
+DIRECTION.md           방향 예측: 라운드별 결과와 파일 안내
+VOLATILITY.md          변동성 예측: 정답 정의, 라운드별 결과, 체결 비용 시뮬레이션
+RESULTS.md             Round 1 전체 결과 (데이터 수집, 모델 선택, 튜닝, 부록 실험)
+ROUND3.md              방향 Round 3: 시드 추가, 학습 변형, stacking
+LOB_MODELS.md          방향: MLPLOB·TLOB와 conv+GRU 비교, CPU / Apple GPU 실행 비교
+run_all.sh             Round 1 전체 실행 순서
 ```
+
+- 각 코드 폴더의 `_paths.py`가 네 폴더를 모두 불러오기 경로에 넣어 줘서, 다른 폴더의 모듈도 그대로 불러올 수 있음.
+- 모델 가중치와 예측은 각 결과 폴더의 `README.md`에 파일별로 설명했음. 예측 파일에는 원본 데이터에서 만든 정답 라벨(`y`)을 넣지 않았음.
 
 ## 실행
 
@@ -140,7 +141,9 @@ pip install -r requirements.txt
 ./run_all.sh
 ```
 
-모든 스크립트는 `src/`에서 실행하며 결과를 `results/`에 이어 씀. 이미 끝난 실험은 건너뜀. 딥러닝은 CPU에서 학습했고(4코어), 전체 실행에는 여러 시간이 걸림.
+- 스크립트는 자기 폴더에서 실행함(예: `cd src/volatility && python vol_r4.py val`). 결과는 과제에 따라 `results/direction/` 또는 `results/volatility/`에 이어 쓰고, 이미 끝난 실험은 건너뜀.
+- 라운드별 실행 순서는 [`DIRECTION.md`](DIRECTION.md), [`ROUND3.md`](ROUND3.md), [`LOB_MODELS.md`](LOB_MODELS.md), [`VOLATILITY.md`](VOLATILITY.md)의 재현 절에 있음.
+- 딥러닝은 CPU에서 학습했고(4코어), 전체 실행에는 여러 시간이 걸림.
 
 ## 라이선스
 

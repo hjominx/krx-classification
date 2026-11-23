@@ -1,6 +1,6 @@
 # 변동성 분류(60초): 무엇을 어떻게 나누나
 
-이 프로젝트는 두 과제를 다룸. 숫자는 모두 `results/vol_cls.jsonl`, `results/vol_v2.jsonl`, `results/vol_r3.jsonl`, `results/vol_r4.jsonl`, `results/r5.jsonl`, `results/r5_combine.jsonl`, `results/gbr_r6.jsonl`, `results/mkt_r7.jsonl`, `results/exec_sim.jsonl`, `results/exec_sim2.jsonl`, `results/r3_final.jsonl`에서 옮겼음.
+이 프로젝트는 두 과제를 다룸. 숫자는 모두 `results/volatility/vol_cls.jsonl`, `results/volatility/vol_v2.jsonl`, `results/volatility/vol_r3.jsonl`, `results/volatility/vol_r4.jsonl`, `results/volatility/r5.jsonl`, `results/volatility/r5_combine.jsonl`, `results/volatility/gbr_r6.jsonl`, `results/volatility/mkt_r7.jsonl`, `results/volatility/exec_sim.jsonl`, `results/volatility/exec_sim2.jsonl`, `results/direction/r3_final.jsonl`에서 옮겼음.
 
 | | 방향 분류 (5초) | 변동성 분류 (60초) |
 |---|---|---|
@@ -16,7 +16,7 @@
   - 예: +1틱, −1틱, +1틱 움직이면 RV60 = 3틱. 제자리로 돌아와도 출렁인 만큼은 다 셈.
   - 중간가는 최우선 매수·매도 호가의 평균이라 0.5틱 단위로 움직일 수 있음.
 - 60초 창이 끝까지 관측되지 않았거나, 창 안에 데이터 공백(5초 넘게 끊긴 구간)이 있으면 그 시점에는 정답을 붙이지 않음.
-- 코드: `src/vol_cls.py`의 `rv()`, 정답 캐시는 `python vol_cls.py labels`로 만듦.
+- 코드: `src/volatility/vol_cls.py`의 `rv()`, 정답 캐시는 `python vol_cls.py labels`로 만듦.
 
 ## 2. 3개 클래스로 나누기
 - 경계값은 학습 기간(47일) RV60의 3분위수로 정하고, 모델을 돌리기 전에 고정했음.
@@ -51,10 +51,54 @@
 | **Round 7: 시장 피처 GBM 회귀 0.9 + conv+GRU 회귀 0.1 혼합 (8절)** | `mkt_r7.py` | **0.6637** |
 
 - Round 2는 `log(1 + RV60)`을 회귀로 예측한 뒤, 검증셋에서 macro-F1이 가장 높은 경계값 [2.0, 2.85]로 잘랐음. 틱으로 바꾸면 약 6.4틱과 16.3틱으로, 정답 기준(7.0, 19.5)보다 조금 낮음.
-- Round 3 − Round 2: +0.0020, 날짜 단위 부트스트랩 95% 구간 [−0.0010, +0.0041]로 0을 포함하므로 유의하지 않음(자세한 내용은 [`ROUND3.md`](ROUND3.md) 9절).
+- Round 3 − Round 2: +0.0020, 날짜 단위 부트스트랩 95% 구간 [−0.0010, +0.0041]로 0을 포함하므로 유의하지 않음(자세한 내용은 4-1절).
 - 크게 틀리는 경우는 드묾: conv+GRU 테스트에서 잔잔↔격렬 혼동은 약 0.8%, 1.5%뿐이고, 대부분은 이웃한 클래스끼리 헷갈린 것임(`figures/18_vol_confusion.png`).
 - conv+GRU의 날짜별 테스트 macro-F1은 0.514–0.672로 날마다 차이가 큼.
 - 테스트 기간은 `vol_cls.py`, `vol_v2.py`, `vol_r3.py`에서 반복해 썼으므로 깨끗한 hold-out이 아님.
+
+## 4-1. Round 3: 여러 모델 결합 (stacking, `vol_r3.py`)
+
+방향 분류 Round 3([`ROUND3.md`](ROUND3.md))와 같은 방식을 변동성 분류(잔잔 / 보통 / 격렬)에 적용했음. 새 모델은 학습하지 않고 Round 2(`vol_v2.py`)의 모델을 그대로 썼음.
+결과는 `results/volatility/vol_r3.jsonl`에 있음.
+
+### 4-1.1 설정 (실행 전에 고정)
+- 결합 재료: GBM 분류기, 로지스틱, conv+GRU 3시드 평균의 확률 + GBM 회귀의 예측값(다음 60초 변동성 크기, 숫자 하나).
+- stacking 8종: 방향 분류와 같음(로지스틱 / 작은 GBM × 맥락 피처 유무 × 클래스 가중치 유무, leave-one-day-out).
+- 클래스 비율이 고르지 않아(검증셋 조용 40% / 보통 44% / 격렬 16%) 보통과 격렬에 각각 배수를 붙였음. 범위 0.5–2.0.
+- 경쟁 후보: Round 2 우승(GBM 회귀 + 경계값 [2.0, 2.85]), 단독 모델, 분류기 평균의 모든 조합.
+
+### 4-1.2 검증셋 (같은 행 1,062,287개)
+| 후보 | 검증 macro-F1 |
+|---|---|
+| **stacking: 작은 GBM, 클래스 균형 가중치** | **0.6422** (우승) |
+| GBM 분류기 + conv+GRU 평균, 클래스별 배수 | 0.6414 |
+| stacking: 작은 GBM, 가중치 없음 | 0.6413 |
+| **Round 2: GBM 회귀 + 경계값** | **0.6412** |
+| stacking: 로지스틱 4종 | 0.6398–0.6405 |
+| stacking: 작은 GBM + 맥락 피처 | 0.6287–0.6316 |
+| 단독 GBM 분류기 / conv+GRU / 로지스틱 (클래스별 배수) | 0.6363 / 0.6339 / 0.6275 |
+
+- 우승과 Round 2의 차이는 +0.0010임.
+- 클래스별 배수만으로 단독 모델이 +0.005~+0.009 올랐지만(예: conv+GRU 0.6294 → 0.6339), Round 2의 회귀 방식에는 못 미쳤음.
+- **반반 검증에서는 Round 2가 이겼음.** 앞 6일로 고르면 뒤 6일에서 0.6380 vs 0.6398, 뒤 6일로 고르면 앞 6일에서 0.6213 vs 0.6286.
+- 우승 stacking의 격렬 배수는 0.5로 탐색 범위의 끝임. 범위는 실행 전에 정했기 때문에 결과를 본 뒤 넓히지 않았음.
+
+### 4-1.3 테스트셋 (한 번만 평가, 같은 행 918,939개)
+| | macro-F1 | 정확도 | 재현율 (조용 / 보통 / 격렬) |
+|---|---|---|---|
+| stacking (작은 GBM) | **0.6630** | 0.6551 | 0.631 / 0.662 / 0.686 |
+| Round 2 (GBM 회귀 + 경계값) | 0.6609 | — | — |
+
+- 차이 +0.0020, 날짜 단위 부트스트랩 95% 구간 [−0.0010, +0.0041], 부트스트랩 표본의 92.7%에서 stacking이 앞섰음. **0을 포함하므로 유의하지 않음.**
+- 테스트 10일 중 7일에서 stacking이 높았음.
+- 다시 학습한 GBM 회귀가 Round 2의 테스트 예측과 100% 같아서, 재료 모델이 제대로 재현됐음을 확인했음.
+- 테스트셋은 격렬 비율이 20.6%로 검증셋(15.5%)보다 높았음.
+- 참고: 결합 전 단독 모델의 테스트 macro-F1(배수 1.0) — GBM 분류기 0.6652, conv+GRU 0.6575, 로지스틱 0.6566. GBM 분류기 단독이 가장 높았지만 검증셋에서는 가장 낮은 쪽이었으므로(0.6283) 테스트 결과를 보고 고를 수는 없음.
+
+### 4-1.4 해석
+- 방향 분류에서는 stacking이 반반 검증과 테스트 모두에서 Round 2를 이겼지만, 변동성 분류에서는 반반 검증에서 졌고 테스트 차이도 유의하지 않았음.
+- 변동성은 크기를 숫자로 예측하는 회귀 모델 하나가 이미 핵심 정보를 거의 다 담고 있어, 여러 모델을 결합해도 더할 것이 적었던 것으로 보임(추정).
+- 변동성 테스트셋도 `vol_cls.py`, `vol_v2.py`에서 이미 쓰였으므로 깨끗한 hold-out이 아님.
 
 ## 5. Round 4: conv+GRU도 회귀로 (`vol_r4.py`)
 - 아이디어: GBM은 분류보다 회귀 + 경계값이 확실히 나았음(검증 0.6289 → 0.6417). 그런데 가장 빠른 딥러닝 모델인 conv+GRU는 분류로만 학습했었음. 그래서 conv+GRU도 다음 60초 변동성 크기(`log(1 + RV60)`)를 숫자로 예측하게 하고, 경계값 두 개로 클래스를 나눴음.
@@ -250,7 +294,7 @@ GPU가 있으면 자동으로 GPU를 쓰지만, 이번 실행은 CPU에서 했�
 ## 11. 재현
 
 ```bash
-cd src
+cd src/volatility
 python vol_cls.py labels      # RV60 정답과 3분위 경계값
 python vol_cls.py base        # 단순 기준·로지스틱·GBM (검증)
 python vol_cls.py gru         # conv+GRU (검증)
@@ -272,8 +316,8 @@ python r5_combine.py vol_val   # Round 5: 결합 선택 (검증)
 python r5_combine.py vol_test  # Round 5: 테스트
 python gbr_r6.py fit past,resid,poisson,slow,lag,sub2   # Round 6: GBM 회귀 변형 (검증)
 python gbr_r6.py combo         # Round 6: 통과한 변화 합치기 (이번에는 해당 없음)
-python market_feat.py fetch    # Round 7: Yahoo Finance 시간봉·일봉 받기 (data/market)
-python market_feat.py build    # Round 7: 시장 피처 24개 (data/feat_mkt)
+python ../common/market_feat.py fetch   # Round 7: Yahoo Finance 시간봉·일봉 받기 (data/market)
+python ../common/market_feat.py build   # Round 7: 시장 피처 24개 (data/feat_mkt)
 python mkt_r7.py fit vol_base,vol_mkt,dir_base,dir_mkt   # Round 7: 짝 비교 (검증)
 python mkt_r7.py vol_val       # Round 7: 변동성 결합 선택 (검증)
 python mkt_r7.py vol_test      # Round 7: 테스트
