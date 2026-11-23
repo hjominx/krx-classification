@@ -14,6 +14,7 @@
 | Round 6: GBM 회귀 개선 시도 | `gbr_r6.jsonl` | `gbr_r6.py` |
 | Round 7: 시장 전체 정보 피처 | `mkt_r7.jsonl` | `src/common/market_feat.py`, `mkt_r7.py` |
 | 체결 비용 시뮬레이션 | `exec_sim.jsonl`, `exec_sim2.jsonl` | `exec_sim.py`, `exec_sim2.py` |
+| 잔잔 → 격렬 전환 점검 (저장된 예측 분석) | `transition.jsonl` | `transition.py` |
 
 - `r5.jsonl`에는 방향과 변동성을 함께 학습한 모델(`joint`)과 방향 대조군(`mt_allv`)의 방향 결과도 있음.
 - `mkt_r7.jsonl`에는 방향 GBM에 시장 피처를 넣은 짝 비교(`dir_base`, `dir_mkt`)도 있음.
