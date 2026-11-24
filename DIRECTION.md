@@ -16,8 +16,8 @@
 | 단계 | 방법 | 검증 | 테스트 | 자세한 문서 |
 |---|---|---|---|---|
 | 단순 기준 | 항상 보합 / 모멘텀 | 0.2564 / 0.3486 | 0.2498 / 0.3612 | [`RESULTS.md`](RESULTS.md) |
-| Round 1 | 로지스틱 / GBM / DeepLOB / conv+GRU(튜닝) | 0.5012 / 0.5024 / 0.4895 / 0.5109 | 0.4985 / 0.4961 / 0.4782 / 0.5067 | [`RESULTS.md`](RESULTS.md) |
-| Round 2 | GBM + conv+GRU 2종(`mt`, `tcn`) 평균, 보합 배수 1.1 | 0.5179 | 0.5172 | 2절 |
+| Round 1 | 로지스틱 / GBM(튜닝) / DeepLOB / conv+GRU(튜닝) | 0.5012 / 0.5069 / 0.4895 / 0.5109 | 0.4985 / 0.4961 / 0.4782 / 0.5067 | [`RESULTS.md`](RESULTS.md) |
+| Round 2 | GBM + conv+GRU(`mt`) + TCN(`tcn`) 평균, 보합 배수 1.1 | 0.5179 | 0.5172 | 2절 |
 | MLPLOB·TLOB | TLOB 128스냅샷, 시드 3개 평균 (같은 행의 conv+GRU 0.5138) | 0.5183 | 0.5094 | [`LOB_MODELS.md`](LOB_MODELS.md) |
 | **Round 3** | **모델 8개를 로지스틱 회귀로 결합(stacking)** | **0.5194** | **0.5185** | [`ROUND3.md`](ROUND3.md) |
 | Round 5 | 피처 145개 `mt` / 변동성과 공동 학습(`joint`), 시드 0·1 평균 | 0.5086 / 0.5068 | 기준(0.5129) 미달로 하지 않음 | [`VOLATILITY.md`](VOLATILITY.md) 6절 |

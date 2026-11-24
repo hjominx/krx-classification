@@ -29,6 +29,7 @@ Added after the first run: AUC of each forecast minus that of the past-300 s RV 
 same resamples (stage auc_vs_past300). Then, VAL only (TEST kept for a rule that may be tested later), stage topk: within
 s = calm, ranked by the final forecast (r7), the share that turns turbulent among the top 0.1 / 0.5 / 1 / 2 / 5 / 10 / 20 %
 of rows and the share of all calm -> turbulent rows they hold; and the median forecast by the class of the next 60 s.
+Added for the figures (stage confusion, TEST): each saved forecast's confusion matrix on every row it scores.
 usage: python transition.py   -> results/volatility/transition.jsonl (stages already in the file are skipped)
 """
 import _paths  # noqa: F401  (src/common, src/direction, src/volatility, src/report on the import path)
@@ -235,6 +236,13 @@ def topk(split, A, name, qs=(0.001, 0.005, 0.01, 0.02, 0.05, 0.10, 0.20)):
              above_2_85_by_next=[round(float((sc[y == c] > 2.85).mean()), 6) for c in range(3)]))
 
 
+def confusion(split, F):
+    for n, f in F.items():
+        cm = np.zeros((3, 3), np.int64); np.add.at(cm, (f['y'], f['pred']), 1)
+        log(dict(stage='confusion', split=split, name=n, rows=int(cm.sum()), n=cm.tolist(),
+                 recall=[round(float(cm[k, k] / cm[k].sum()), 6) for k in range(3)]))
+
+
 if __name__ == '__main__':
     _, VA, TE = C.split_days(); have = {(r['stage'], r.get('split')) for r in recs()}
     if ('info', None) not in have: log(dict(stage='info', cuts=CUTS, fast10_ticks=round(FAST10, 4), n_boot=NB))
@@ -244,3 +252,4 @@ if __name__ == '__main__':
         if ('auc', split) not in have: log(dict(stage='rows', split=split, **info, **ia)); run(split, A, names)
         if ('auc_vs_past300', split) not in have: vs_past300(split, A, names)
         if split == 'val' and ('topk', split) not in have: topk(split, A, 'r7')
+        if split == 'test' and ('confusion', split) not in have: confusion(split, F)

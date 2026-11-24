@@ -52,7 +52,7 @@
 
 - Round 2는 `log(1 + RV60)`을 회귀로 예측한 뒤, 검증셋에서 macro-F1이 가장 높은 경계값 [2.0, 2.85]로 잘랐음. 틱으로 바꾸면 약 6.4틱과 16.3틱으로, 정답 기준(7.0, 19.5)보다 조금 낮음.
 - Round 3 − Round 2: +0.0020, 날짜 단위 부트스트랩 95% 구간 [−0.0010, +0.0041]로 0을 포함하므로 유의하지 않음(자세한 내용은 4-1절).
-- 크게 틀리는 경우는 드묾: conv+GRU 테스트에서 잔잔↔격렬 혼동은 약 0.8%, 1.5%뿐이고, 대부분은 이웃한 클래스끼리 헷갈린 것임(`figures/18_vol_confusion.png`).
+- 크게 틀리는 경우는 드묾: conv+GRU 테스트에서 잔잔↔격렬 혼동은 약 0.8%, 1.5%뿐이고, 대부분은 이웃한 클래스끼리 헷갈린 것임(`figures/18_vol_confusion.png`). 최종 모델(Round 7)도 같은 모양으로 1.0%, 1.6%임(`figures/27_vol_confusion_final.png`).
 - conv+GRU의 날짜별 테스트 macro-F1은 0.514–0.672로 날마다 차이가 큼.
 - 테스트 기간은 `vol_cls.py`, `vol_v2.py`, `vol_r3.py`에서 반복해 썼으므로 깨끗한 hold-out이 아님.
 
@@ -359,6 +359,8 @@ GPU가 있으면 자동으로 GPU를 쓰지만, 이번 실행은 CPU에서 했�
 
 **드문 전환일수록 덜 맞힘 (최종 모델, 테스트)**
 
+그림: `figures/28_vol_transitions.png` (왼쪽: 아래 표, 오른쪽: 그다음 표), 최종 모델의 테스트 혼동행렬은 `figures/27_vol_confusion_final.png`.
+
 | 지금 → 다음 60초 | 지금 상태에서 그렇게 될 비율 | 최종 모델이 맞힌 비율 |
 |---|---|---|
 | 잔잔 → 잔잔 | 64.6% | 84.3% |
@@ -429,6 +431,7 @@ python mkt_r7.py vol_test      # Round 7: 테스트
 python exec_sim.py             # 큰 매수 주문 나눠 내기 시뮬레이션 (테스트 10일)
 python exec_sim2.py            # 개선 규칙: 검증 12일에서 고르고 테스트 10일에서 확인
 python transition.py           # 잔잔 → 격렬 전환 점검 (저장된 예측만 씀)
+python plot_transition.py      # 그림 27·28 (transition.jsonl만 씀)
 ```
 - 먼저 `src/common`에서 `build_features.py`, `trade_features.py`, `features_v2.py`로 피처를 만들어야 함(두 과제 공통, [`DIRECTION.md`](DIRECTION.md) 4절).
 - 변동성 코드는 방향 코드를 불러오지 않고 `src/common`의 `data_v2.py`(피처 열·불러오기·GBM 설정)와 `seq_models.py`(conv+GRU)만 씀. Round 5 선별의 방향 기준점만 `results/direction/v2_deep.jsonl`을 읽음.

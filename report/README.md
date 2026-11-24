@@ -75,6 +75,8 @@
 | `24_cpu_gpu_val_test.png` | CPU 실행 / Apple GPU 실행: 학습 실행별 검증 성능, 시드 3개 평균의 검증·테스트 성능 |
 | `25_cpu_gpu_curves.png` | CPU 실행 / GPU 실행의 epoch별 검증 성능 (6개 구성, 시드 0) |
 | `26_cpu_gpu_speed.png` | 같은 노트북에서 CPU와 GPU의 학습·예측 시간 |
+| `27_vol_confusion_final.png` | 변동성 최종 모델(Round 7) 테스트 혼동행렬 (비율과 행 수) |
+| `28_vol_transitions.png` | 변동성 전환별 발생 비율과 맞힌 비율(테스트), 의심 상위 잔잔 순간의 격렬 비율(검증) |
 
 ## 4. 용어
 
@@ -101,6 +103,8 @@ python cpu_gpu.py records    # results/direction/cpu_gpu.jsonl (same, speed 단�
 python plot_cpu_gpu.py       # figures/24~26_cpu_gpu_*.png
 cd ../volatility
 python plot_vol.py           # figures/18
+python transition.py         # results/volatility/transition.jsonl
+python plot_transition.py    # figures/27~28
 ```
 
 MLPLOB·TLOB 비교의 자세한 설명은 [`../LOB_MODELS.md`](../LOB_MODELS.md)에, CPU 실행과 Apple GPU 실행의 비교는 같은 문서 9절에 있음.

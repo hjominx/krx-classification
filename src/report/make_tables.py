@@ -124,6 +124,7 @@ write('14_lob_models_cost.csv', ['model', 'snapshots', 'n_params', 'multiply_add
 
 # 11. both tasks side by side: direction (5 s) and volatility (60 s), VAL and TEST macro-F1 of every method run on them
 s5 = {r['model']: r['mF1'] for r in rd('select.jsonl') if r.get('exp') == 'horizon' and r.get('H') == 5}
+gbm_val = max(r['mF1'] for r in rd('select.jsonl') if r.get('exp') == 'gbm_grid')   # the tuned GBM that final_eval.py scored on TEST
 v2f = {r['variant']: r for r in rd('v2_final.jsonl') if r.get('stage') == 'test'}
 r3f = rd('r3_final.jsonl')[-1]; vv2 = {r['name']: r for r in rd('vol_v2.jsonl') if r.get('stage') == 'test'}
 vwin = [r for r in rd('vol_v2.jsonl') if r.get('stage') == 'E_winner'][-1]; vr3 = [r for r in rd('vol_r3.jsonl') if r.get('stage') == 'test'][-1]
@@ -131,7 +132,7 @@ na = ''
 rows = [['simple rule', 'always flat / time of day only', s5['majority'], f5['majority']['mF1'], vc['base_val']['time_of_day']['mF1'], vc['test_tab']['time_of_day']['mF1']],
         ['simple rule', 'momentum / previous 60 s class', s5['momentum(sign ret20)'], f5['momentum']['mF1'], vc['base_val']['persistence']['mF1'], vc['test_tab']['persistence']['mF1']],
         ['round 1', 'logistic regression', s5['logreg all'], f5['logreg']['mF1'], vc['base_val']['logistic']['mF1'], vc['test_tab']['logistic']['mF1']],
-        ['round 1', 'GBM', s5['gbm all'], f5['gbm']['mF1'], vc['base_val']['gbm']['mF1'], vc['test_tab']['gbm']['mF1']],
+        ['round 1', 'GBM (direction: tuned on VAL)', gbm_val, f5['gbm']['mF1'], vc['base_val']['gbm']['mF1'], vc['test_tab']['gbm']['mF1']],
         ['round 1', 'DeepLOB', deep['deeplob']['best_val_mF1'], deep['deeplob']['test_mF1'], na, na],
         ['round 1', f"conv+GRU (direction: tuned, {tg['chosen']})", tg['best_val_mF1'], tg['test_mF1'], vc['gru_val']['best_val_mF1'], vc['test_gru']['mF1']],
         ['round 2', 'best on VAL (direction: GBM + mt + tcn mean; volatility: GBM regression + thresholds)', v2f['primary']['val_mF1'], v2f['primary']['mF1'],
