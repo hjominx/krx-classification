@@ -19,10 +19,10 @@ HS = list(C.HORIZONS); hi = HS.index(5)
 
 
 class ConvGRU(nn.Module):
-    def __init__(s, nf, hidden, dropout, nout):
+    def __init__(s, nf, hidden, dropout, nout, c=64):            # c = channels of both convolutions (64 until round 8)
         super().__init__()
-        s.conv = nn.Sequential(nn.Conv1d(nf, 64, 3, padding=1), nn.GELU(), nn.Conv1d(64, 64, 3, padding=1), nn.GELU())
-        s.gru = nn.GRU(64, hidden, batch_first=True); s.head = nn.Sequential(nn.Dropout(dropout), nn.Linear(hidden, nout))
+        s.conv = nn.Sequential(nn.Conv1d(nf, c, 3, padding=1), nn.GELU(), nn.Conv1d(c, c, 3, padding=1), nn.GELU())
+        s.gru = nn.GRU(c, hidden, batch_first=True); s.head = nn.Sequential(nn.Dropout(dropout), nn.Linear(hidden, nout))
 
     def forward(s, x): return s.head(s.gru(s.conv(x.transpose(1, 2)).transpose(1, 2))[0][:, -1])
 
@@ -56,7 +56,7 @@ class Tfm(nn.Module):
 
 def make(cfg, nf):
     nout = 3 * (len(HS) if cfg['mt'] else 1)
-    if cfg['arch'] == 'convgru': return ConvGRU(nf, cfg['hidden'], cfg['dropout'], nout)
+    if cfg['arch'] == 'convgru': return ConvGRU(nf, cfg['hidden'], cfg['dropout'], nout, c=cfg.get('conv', 64))
     if cfg['arch'] == 'tcn': return TCN(nf, cfg['dropout'], nout)
     return Tfm(nf, cfg['dropout'], nout)
 

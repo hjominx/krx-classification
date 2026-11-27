@@ -27,7 +27,7 @@ import exp_v2 as E
 from seq_models import SMOKE, T, BS, EPOCHS, PER, PAT, HS, hi, ConvGRU, TCN, Tfm, make, load, windows  # noqa: F401  (also used as D.<name>)
 
 torch.set_num_threads(int(sys.argv[2]) if len(sys.argv) > 2 else 2)
-OUT = E.OUT; RES = os.path.join(OUT, 'v2_deep.jsonl')
+OUT = E.OUT; RES = os.path.join(OUT, 'v2_deep.jsonl'); PFX = 'v2'      # PFX: file-name prefix (width_r8.py sets 'r8')
 BASE = dict(arch='convgru', cols='full', hidden=64, dropout=0.2, ema=False, wd=0.0, ls=0.0, mt=False)
 CONFIGS = dict(base_ref=dict(BASE, cols='refc77'), base=dict(BASE), ema=dict(BASE, ema=True),
                reg=dict(BASE, ema=True, dropout=0.3, wd=1e-4, ls=0.05), mt=dict(BASE, ema=True, mt=True),
@@ -102,8 +102,8 @@ def run(name, seed, save=True):
                best_epoch=best_ep, best_weights=best_which, val10_mF1=round(float(best), 4), val_mF1=round(E.mf1(y, p), 4),
                val_acc=round(float(accuracy_score(y, p)), 4), best_m=m, mF1_at_best_m=fm, curve=curve, sec=round(time.time() - t0))
     if save and not SMOKE:
-        np.savez_compressed(os.path.join(OUT, f'v2_val_deep_{tag}.npz'), prob=prob.astype(np.float32), y=y, day=day[va_all], row=row[va_all])
-        torch.save(dict(state=best_state, mu=mu, sd=sd, cfg=cfg, cols=cols, epochs=best_ep + 1), os.path.join(OUT, f'v2_deep_{tag}.pt'))
+        np.savez_compressed(os.path.join(OUT, f'{PFX}_val_deep_{tag}.npz'), prob=prob.astype(np.float32), y=y, day=day[va_all], row=row[va_all])
+        torch.save(dict(state=best_state, mu=mu, sd=sd, cfg=cfg, cols=cols, epochs=best_ep + 1), os.path.join(OUT, f'{PFX}_deep_{tag}.pt'))
         with open(RES, 'a') as fh: fh.write(json.dumps(rec) + '\n')
     print(json.dumps({k: v for k, v in rec.items() if k != 'curve'}), flush=True)
     return rec

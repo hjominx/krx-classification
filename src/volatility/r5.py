@@ -45,7 +45,8 @@ WV = (10, 30, 60, 120); IV = WV.index(60); HS, hi, T = D.HS, D.hi, D.T
 SMOKE = D.SMOKE; TR, VA = (E.TR[:2], E.VA[:1]) if SMOKE else (E.TR, E.VA)
 CFG = dict(vreg_mh=dict(vol=True, mh=True), vreg_lr=dict(vol=True, lr=3e-4), vreg_reg=dict(vol=True, dropout=0.3, wd=1e-4),
            vreg_st2=dict(vol=True, stride=2), joint=dict(dir=True, vol=True, mh=True), mt_allv=dict(dir=True))
-DEF = dict(dir=False, vol=False, mh=False, lr=1e-3, wd=0.0, dropout=0.2, stride=1, hidden=64)
+DEF = dict(dir=False, vol=False, mh=False, lr=1e-3, wd=0.0, dropout=0.2, stride=1, hidden=64, conv=64)
+PFX = 'r5'                                   # file-name prefix (width_r8.py sets 'r8')
 REF = dict(vol=('vol_r4.jsonl', 'convgru_reg'), dir=('v2_deep.jsonl', 'mt'))
 
 
@@ -132,7 +133,7 @@ def run(name, seed):
     va_all = {'dir': np.where(dir_ok & ev)[0], 'vol': np.where(vol_ok & ev)[0]}; va = {t: va_all[t][::10] for t in tasks}
     nd = 3 * len(HS) if cfg['dir'] else 0; hv = list(range(len(WV))) if cfg['mh'] else [IV]; nv = len(hv) if cfg['vol'] else 0
     torch.manual_seed(seed); rng = np.random.default_rng(seed); t0 = time.time()
-    net = D.ConvGRU(F.shape[1], cfg['hidden'], cfg['dropout'], nd + nv).to(DEV); sh = D.ConvGRU(F.shape[1], cfg['hidden'], cfg['dropout'], nd + nv).to(DEV)
+    net = D.ConvGRU(F.shape[1], cfg['hidden'], cfg['dropout'], nd + nv, c=cfg['conv']).to(DEV); sh = D.ConvGRU(F.shape[1], cfg['hidden'], cfg['dropout'], nd + nv, c=cfg['conv']).to(DEV)
     opt = (torch.optim.AdamW(net.parameters(), cfg['lr'], weight_decay=cfg['wd']) if cfg['wd'] else torch.optim.Adam(net.parameters(), cfg['lr']))
     ema = {a: b.detach().clone() for a, b in net.state_dict().items()}; step = 0
     if cfg['dir']:
@@ -178,12 +179,12 @@ def run(name, seed):
         if t == 'dir':
             p = np.exp(o[:, 3 * hi:3 * hi + 3] - o[:, 3 * hi:3 * hi + 3].max(1, keepdims=True)); p /= p.sum(1, keepdims=True); y = Y[idx, hi]
             m, fm, _ = E.best_m(p, y); f = mf1(y, p.argmax(1)); extra = dict(best_m=m, mF1_at_best_m=fm)
-            np.savez_compressed(os.path.join(OUT, f'r5_val_{tag}.npz'), prob=p.astype(np.float32), y=y, day=X['day'][idx], row=X['row'][idx])
+            np.savez_compressed(os.path.join(OUT, f'{PFX}_val_{tag}.npz'), prob=p.astype(np.float32), y=y, day=X['day'][idx], row=X['row'][idx])
         else:
             pr = o[:, nd + hv.index(IV)] * zs[IV] + zm[IV]; y = X['yv'][idx]; f, thr = tune(pr, y); extra = dict(thr=thr)
-            np.savez_compressed(os.path.join(OUT, f'r5_val_{tag}.npz'), pred=pr.astype(np.float32), y=y, day=X['day'][idx], row=X['row'][idx])
+            np.savez_compressed(os.path.join(OUT, f'{PFX}_val_{tag}.npz'), pred=pr.astype(np.float32), y=y, day=X['day'][idx], row=X['row'][idx])
         torch.save(dict(state={a: b.cpu() for a, b in best[t]['state'].items()}, mu=X['mu'], sd=X['sd'], zm=zm, zs=zs, cfg=cfg, nout=nd + nv, hv=hv),
-                   os.path.join(OUT, f'r5_{tag}.pt'))
+                   os.path.join(OUT, f'{PFX}_{tag}.pt'))
         log(dict(stage='train', name=name, seed=seed, task=t, device=DEV.type, best_epoch=best[t]['ep'], best_weights=best[t]['which'],
                  val10=round(best[t]['f'], 4), val_mF1=round(f, 4), n_val=int(len(idx)), **extra, smoke=SMOKE, sec=round(time.time() - t0),
                  cfg=cfg, curve=curve))

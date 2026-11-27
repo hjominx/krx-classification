@@ -104,18 +104,18 @@ def vol_val():
     log(dict(stage='val_done', sec=round(time.time() - t0)))
 
 
-def test_bag(name):
+def test_bag(name, pfx='r5'):
     """TEST predictions (log(1 + RV60)) of the 5-seed bag of a round-5 volatility config, with the keys of the rows"""
     F, Y, Vd, gseg, day, row, cov = D.load(E.TE, list(V.ALLV)); ok = np.zeros(len(F), bool); k = 0
     for dd in E.TE:
         a = np.load(os.path.join(R5.VD, f'{dd}.npz')); m = len(a['ok']); ok[k:k + m] = a['ok']; k += m
     preds, keys = [], None
     for s in range(5):
-        ck = torch.load(os.path.join(OUT, f'r5_{name}_s{s}_vol.pt'), weights_only=False); cfg = ck['cfg']
+        ck = torch.load(os.path.join(OUT, f'{pfx}_{name}_s{s}_vol.pt'), weights_only=False); cfg = ck['cfg']
         st = cfg['stride']; span = st * (D.T - 1); off = np.arange(-span, 1, st)
         seg_ok = np.zeros(len(F), bool); seg_ok[span:] = gseg[span:] == gseg[:-span]; ev = np.where(seg_ok & ok & cov)[0]
         G_ = ((F - ck['mu']) / ck['sd']).astype(np.float32); np.clip(G_, -10, 10, out=G_)
-        net = D.ConvGRU(F.shape[1], cfg['hidden'], cfg['dropout'], ck['nout']); net.load_state_dict(ck['state']); net.to(R5.DEV)
+        net = D.ConvGRU(F.shape[1], cfg['hidden'], cfg['dropout'], ck['nout'], c=cfg.get('conv', 64)); net.load_state_dict(ck['state']); net.to(R5.DEV)
         nd = 3 * len(D.HS) if cfg['dir'] else 0; col = nd + ck['hv'].index(R5.IV)
         o = R5.outputs(net, G_, ev, off)[:, col] * ck['zs'][R5.IV] + ck['zm'][R5.IV]; del G_
         k_ = KEY(day[ev], row[ev])

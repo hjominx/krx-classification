@@ -41,12 +41,17 @@ def boot(y, d, p_new, p_ref, n=2000, seed=1):
                 share_positive=round(float(np.mean(np.array(out) > 0)), 3))
 
 
-def deep_member(name, te_days):
-    """mean TEST probability of all seeds of one deep bag, with the keys of its rows"""
-    paths = PR.pool_files()[name]; probs, keys = [], None; cache = {}
-    for p in paths:
-        b = os.path.basename(p); s = int(b.split('_s')[-1][:-4])
-        ck = os.path.join(OUT, f'v2_deep_{name}_s{s}.pt' if b.startswith('v2_') else f'r3_deep_{name}_s{s}.pt'); ck = torch.load(ck, weights_only=False)
+def deep_member(name, te_days, cks=None):
+    """mean TEST probability of all seeds of one deep bag, with the keys of its rows (cks: the bag's checkpoint files;
+    default: those of its VAL files in the round-3 pool)"""
+    if cks is None:
+        cks = []
+        for p in PR.pool_files()[name]:
+            b = os.path.basename(p); s = int(b.split('_s')[-1][:-4])
+            cks.append(os.path.join(OUT, f'v2_deep_{name}_s{s}.pt' if b.startswith('v2_') else f'r3_deep_{name}_s{s}.pt'))
+    probs, keys = [], None; cache = {}
+    for path in cks:
+        ck = torch.load(path, weights_only=False)
         cfg = ck['cfg']; st = cfg.get('stride', 1); span = st * (D.T - 1); off = np.arange(-span, 1, st)
         if 'F' not in cache:
             F, Y, V, gseg, day, row, cov = D.load(te_days, ck['cols']); F = (F - ck['mu']) / ck['sd']; np.clip(F, -10, 10, out=F)
@@ -61,16 +66,15 @@ def deep_member(name, te_days):
         k_ = KEY(cache['day'][ev], cache['row'][ev])
         if keys is None: keys = k_
         else: assert (keys == k_).all()
-        probs.append(np.concatenate(o)); print(name, s, 'done', flush=True)
+        probs.append(np.concatenate(o)); print(name, os.path.basename(path), 'done', flush=True)
     return np.mean(probs, 0), keys
 
 
-if __name__ == '__main__':
-    t0 = time.time()
-    w = [json.loads(l) for l in open(os.path.join(OUT, 'r3_post.jsonl')) if '"winner"' in l and '"pool": "main"' in l][-1]
-    te_days = [d for d in E.TE if float(C.load_day(d)['cov']) >= C.MIN_COV]; P, K = {}, {}
-    for n in w['members']:
-        if n in ('base', 'mt', 'tcn') or n.startswith('mt_'): P[n], K[n] = deep_member(n, te_days)
+def test_members(members, te_days, deep=deep_member):
+    """TEST probabilities and row keys of every member, as trained on TRAIN (deep(name, te_days) -> a deep bag's)"""
+    t0 = time.time(); P, K = {}, {}
+    for n in members:
+        if n in ('base', 'mt', 'tcn') or n.startswith('mt_'): P[n], K[n] = deep(n, te_days)
         elif n in ('gbm', 'logreg'):
             if 'tab' not in K:
                 Xtr, ytr, _, _ = E.stack(E.TR, sub=2); Xte, yte, dte, rte = E.stack(te_days); K['tab'] = KEY(dte, rte); _, _, cols = E.chosen_set()
@@ -85,6 +89,13 @@ if __name__ == '__main__':
             g = pickle.load(open(os.path.join(OUT, f'r3_{n}.pkl'), 'rb')); X, yy, dd, rr = GR.stack(te_days, g['lag'])
             P[n] = next(pr for it, pr in enumerate(g['model'].staged_predict_proba(X), 1) if it == g['best_iter']); K[n] = KEY(dd, rr)
         print('member', n, 'done', round(time.time() - t0), flush=True)
+    return P, K
+
+
+if __name__ == '__main__':
+    t0 = time.time()
+    w = [json.loads(l) for l in open(os.path.join(OUT, 'r3_post.jsonl')) if '"winner"' in l and '"pool": "main"' in l][-1]
+    te_days = [d for d in E.TE if float(C.load_day(d)['cov']) >= C.MIN_COV]; P, K = test_members(w['members'], te_days)
     # common rows of all members and the reference
     ref = np.load(os.path.join(OUT, 'v2_test_primary.npz')); kref = KEY(ref['day'], ref['row'])
     keys = kref
