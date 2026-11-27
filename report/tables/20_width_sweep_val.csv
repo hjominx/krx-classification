@@ -1,0 +1,15 @@
+﻿task,conv channels x GRU units,n_params,val_macro_F1_seed0,val_macro_F1_seed1,mean,screen,train_minutes_seed0,train_minutes_seed1,seconds_per_epoch_seed0 (2 CPU threads)
+direction,64 x 64 (rounds 1-7),62735,0.5135,0.5123,0.5129,reference,6.1,,61
+direction,32 x 32,22159,0.5118,0.5129,0.51235,fails,3.0,2.7,30
+direction,32 x 64,35119,0.5132,0.5103,0.51175,fails,4.3,3.9,43
+direction,64 x 32,46703,0.5133,0.5124,0.51285,fails,4.3,4.0,43
+direction,64 x 128,113231,0.5135,0.5122,0.51285,fails,9.5,8.1,95
+direction,128 x 64,136399,0.5128,0.5116,0.5122,fails,9.3,9.6,94
+direction,128 x 128,199183,0.5125,0.5117,0.5121,fails,13.3,13.6,133
+volatility,64 x 64 (rounds 1-7),65476,0.6341,0.6339,0.634,reference,5.4,,65
+volatility,32 x 32,23524,0.6338,0.6332,0.6335,fails,2.8,2.4,34
+volatility,32 x 64,36132,0.6359,0.6332,0.63455,passes,5.2,4.1,44
+volatility,64 x 32,49796,0.6325,0.634,0.63325,fails,3.3,4.1,49
+volatility,64 x 128,115268,0.6324,0.6319,0.63215,fails,7.1,7.2,107
+volatility,128 x 64,142596,0.6338,0.6331,0.63345,fails,6.9,7.0,104
+volatility,128 x 128,204676,0.6334,0.6332,0.6333,fails,9.9,10.0,149

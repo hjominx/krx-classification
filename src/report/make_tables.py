@@ -155,6 +155,13 @@ if 'vol_test' in vr7 and not vr7['vol_test'].get('skipped'):
     sp = vr7['vol_test']['spec']
     rows.append(['round 7', f"volatility only: GBM regression with market-wide features x {sp['w']} + conv+GRU regression x {round(1 - sp['w'], 2)}",
                  na, na, vr7['vol_winner']['mF1'], vr7['vol_test']['mF1']])
+W8 = {t: [json.loads(l) for l in open(os.path.join(R, t, 'width_r8.jsonl'))] if os.path.exists(os.path.join(R, t, 'width_r8.jsonl')) else []
+      for t in ('direction', 'volatility')}                 # both tasks write a width_r8.jsonl, so rp() is not used here
+vt8 = [r for r in W8['volatility'] if r.get('stage') == 'vol_test' and not r.get('skipped')]
+if vt8:
+    sp = vt8[-1]['spec']; c8, h8 = vt8[-1]['width'][1:].split('x')
+    rows.append(['round 8', f"volatility only: GBM regression with market-wide features x {sp['w']} + conv+GRU regression ({c8} channels x GRU {h8}) x {round(1 - sp['w'], 2)}",
+                 na, na, vt8[-1]['val_mF1'], vt8[-1]['mF1']])
 write('15_two_tasks_summary.csv', ['round', 'method', 'direction_5s_val_mF1', 'direction_5s_test_mF1', 'volatility_60s_val_mF1', 'volatility_60s_test_mF1'], rows)
 
 # 12. CPU run vs Apple GPU (MPS) run of the MLPLOB / TLOB comparison (cpu_gpu.py, LOB_MODELS.md section 9)
@@ -196,3 +203,26 @@ write('19_cpu_gpu_speed.csv', ['model', 'snapshots', 'cpu_threads', 'cpu_ms_per_
                                'mps_ms_forward_256', 'forward_speedup', 'cpu_min_per_epoch_train_only', 'mps_min_per_epoch_train_only', 'power', 'lid'],
       [[r['name'].split('_')[0].upper().replace('CONVGRU', 'conv+GRU'), r['T'], r['cpu_threads'], r['cpu_train_ms'], r['mps_train_ms'], r['train_speedup'], r['cpu_fwd256_ms'],
         r['mps_fwd256_ms'], r['fwd_speedup'], r['cpu_epoch_train_min'], r['mps_epoch_train_min'], r['power'], r['lid']] for r in st('speed')])
+
+# 13. round 8: layer widths of the conv+GRU (width_r8.py of both tasks), VAL macro-F1 of seeds 0 / 1
+def n_params_pt(task, name):
+    """number of weights in the saved seed-0 checkpoint of a round-8 run"""
+    import torch
+    f = f'r8_deep_{name}_s0.pt' if task == 'direction' else f'r8_{name}_s0_vol.pt'
+    return int(sum(v.numel() for v in torch.load(os.path.join(R, task, f), weights_only=False)['state'].values()))
+
+
+rows = []
+for t in ('direction', 'volatility'):
+    sm = [r for r in W8[t] if r.get('stage') == 'screen_summary']
+    if not sm: continue
+    sm = sm[-1]; run = {(r['name'], r['seed']): r for r in W8[t] if ('stage' not in r) or r.get('stage') == 'train'}
+    ref = 'mt_c64_h64' if t == 'direction' else 'w64x64'
+    per_ep = lambda r: round(r['sec'] / len(r['curve']))                        # seconds per epoch of 200,000 windows (incl. the VAL check)
+    rows.append([t, '64 x 64 (rounds 1-7)', n_params_pt(t, ref), *sm['reference_seeds01'], round(sum(sm['reference_seeds01']) / 2, 5), 'reference',
+                 round(run[(ref, 0)]['sec'] / 60, 1), '', per_ep(run[(ref, 0)])])
+    for w in sm['widths']:
+        rows.append([t, f"{w['width'][0]} x {w['width'][1]}", w['n_params'], *w['seeds01'], round(sum(w['seeds01']) / 2, 5), 'passes' if w['passes'] else 'fails',
+                     round(w['sec'][0] / 60, 1), round(w['sec'][1] / 60, 1), per_ep(run[(w['name'], 0)])])
+write('20_width_sweep_val.csv', ['task', 'conv channels x GRU units', 'n_params', 'val_macro_F1_seed0', 'val_macro_F1_seed1', 'mean', 'screen',
+                                 'train_minutes_seed0', 'train_minutes_seed1', 'seconds_per_epoch_seed0 (2 CPU threads)'], rows)

@@ -13,6 +13,7 @@
 | Round 5: 보조 정답·공동 학습 등 | `r5.jsonl`, `r5_combine.jsonl` | `r5.py`, `r5_combine.py` |
 | Round 6: GBM 회귀 개선 시도 | `gbr_r6.jsonl` | `gbr_r6.py` |
 | Round 7: 시장 전체 정보 피처 | `mkt_r7.jsonl` | `src/common/market_feat.py`, `mkt_r7.py` |
+| Round 8: conv+GRU 층 폭 | `width_r8.jsonl` | `width_r8.py` |
 | 체결 비용 시뮬레이션 | `exec_sim.jsonl`, `exec_sim2.jsonl` | `exec_sim.py`, `exec_sim2.py` |
 | 잔잔 → 격렬 전환 점검 (저장된 예측 분석) | `transition.jsonl` | `transition.py` |
 
@@ -28,8 +29,9 @@
 | `r5_<구성>_s<시드>_<vol 또는 dir>.pt` | Round 5 conv+GRU (`vreg_mh`, `vreg_lr`, `joint` 등) | `r5.py`, `r5_combine.py`의 `test_bag()` |
 | `r6_gbr_<구성>.pkl` | Round 6 GBM 회귀 변형 | `gbr_r6.py` |
 | `r7_<구성>.pkl` | Round 7 GBM (시장 피처 있음·없음, 변동성 `vol_*`·방향 `dir_*`) | `mkt_r7.py` |
+| `r8_w<채널>x<칸>_s<시드>_vol.pt` | Round 8 conv+GRU 회귀, 폭별 (`vreg_mh` 방식, 최종 혼합에는 `w32x64` 시드 0~4) | `r5.py`, `r5_combine.py`의 `test_bag(name, pfx='r8')` |
 
-- `.pt`는 `state`(가중치), `mu`·`sd`(학습셋 표준화 값)를 담고, 회귀 모델은 정답 표준화 값(`zm`, `zs`)도 담음. Round 5는 `cfg`, 출력 개수(`nout`), 변동성 시간(`hv`)도 담음.
+- `.pt`는 `state`(가중치), `mu`·`sd`(학습셋 표준화 값)를 담고, 회귀 모델은 정답 표준화 값(`zm`, `zs`)도 담음. Round 5·8은 `cfg`(Round 8은 합성곱 채널 `conv`, GRU 칸 `hidden` 포함), 출력 개수(`nout`), 변동성 시간(`hv`)도 담음.
 - `.pkl`은 학습된 GBM과 검증셋에서 고른 트리 수(`best_iter`)를 담음.
 - Round 2 GBM 회귀는 같은 설정으로 다시 학습하면 Round 2 테스트 예측과 100% 같아서 따로 저장하지 않았음.
 
@@ -49,5 +51,6 @@
 | `r5_vol_test.npz` | Round 5 혼합 | 테스트 | `x`, `pred`, `day`, `row` |
 | `r7_val_vol_mkt.npz` | Round 7 시장 피처 GBM 회귀 | 검증 | `pred`(예측한 log(1 + RV60)), `day`, `row` |
 | `r7_vol_test.npz` | Round 7 혼합 | 테스트 | `x`, `pred`, `day`, `row` |
+| `r8_vol_test.npz` | Round 8 혼합 (최종) | 테스트 | `x`, `pred`, `day`, `row` |
 
 - `day`는 거래일(YYYYMMDD), `row`는 그날 호가 스냅샷의 순번임.

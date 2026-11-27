@@ -19,7 +19,7 @@ def save(fig, name):
 
 
 def confusion():
-    """the final model's TEST confusion matrix, rows = actual class (as 18_vol_confusion.png for round 1)"""
+    """round 7's TEST confusion matrix (the final model until round 8), rows = actual class (as 18_vol_confusion.png for round 1)"""
     r = one(stage='confusion', split='test', name='r7'); n = np.array(r['n']); cm = n / n.sum(1, keepdims=True)
     fig, ax = plt.subplots(figsize=(5.6, 4.6))
     ax.imshow(cm, cmap=LinearSegmentedColormap.from_list('b', ['#f3f7fd', S1]), vmin=0, vmax=1)
@@ -29,7 +29,7 @@ def confusion():
             ax.text(j, i - 0.09, f'{cm[i, j]:.1%}', ha='center', va='center', fontsize=13, color=c, weight='bold' if i == j else 'normal')
             ax.text(j, i + 0.2, f'{n[i, j]:,}', ha='center', va='center', fontsize=8.5, color=c)
     ax.set_xticks(range(3), LAB); ax.set_yticks(range(3), LAB); ax.set_xlabel('predicted'); ax.set_ylabel('actual (next 60 s)')
-    ax.set_title(f"Round 7 (final) on TEST: share of each actual class\n{r['rows']:,} rows", fontsize=11, color=INK, loc='left')
+    ax.set_title(f"Round 7 on TEST: share of each actual class\n{r['rows']:,} rows", fontsize=11, color=INK, loc='left')
     ax.grid(False)
     for s in ax.spines.values(): s.set_visible(False)
     save(fig, '27_vol_confusion_final.png')

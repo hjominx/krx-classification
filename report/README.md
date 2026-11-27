@@ -13,7 +13,7 @@
 
 ## 2. 결과 표 (`tables/`)
 
-`src/report/make_tables.py`가 `results/direction/*.jsonl`에서 만든 CSV임. 엑셀에서 바로 열 수 있음(UTF-8 BOM).
+`src/report/make_tables.py`가 `results/direction/`, `results/volatility/`의 결과 기록(`*.jsonl`)에서 만든 CSV임. 엑셀에서 바로 열 수 있음(UTF-8 BOM).
 
 | 파일 | 내용 | 데이터 구간 |
 |---|---|---|
@@ -36,6 +36,7 @@
 | `17_cpu_gpu_val_test.csv` | CPU 실행 / GPU 실행의 고른 구성, 시드별·평균 macro-F1, 부트스트랩 구간, 클래스별 재현율 | 검증·테스트 |
 | `18_cpu_gpu_same_weights.csv` | 같은 가중치로 CPU / GPU 예측할 때 확률 차이와 바뀐 예측 수 | 검증 |
 | `19_cpu_gpu_speed.csv` | 같은 노트북에서 학습 1 step, 예측 256개 시간(CPU 2스레드 / GPU)과 배수 | — |
+| `20_width_sweep_val.csv` | Round 8: conv+GRU 층 폭(합성곱 채널 × GRU 칸)별 시드 0·1 macro-F1, 가중치 수, 학습 시간 (두 과제) | 검증 |
 
 ### 주요 결과
 
@@ -75,8 +76,9 @@
 | `24_cpu_gpu_val_test.png` | CPU 실행 / Apple GPU 실행: 학습 실행별 검증 성능, 시드 3개 평균의 검증·테스트 성능 |
 | `25_cpu_gpu_curves.png` | CPU 실행 / GPU 실행의 epoch별 검증 성능 (6개 구성, 시드 0) |
 | `26_cpu_gpu_speed.png` | 같은 노트북에서 CPU와 GPU의 학습·예측 시간 |
-| `27_vol_confusion_final.png` | 변동성 최종 모델(Round 7) 테스트 혼동행렬 (비율과 행 수) |
+| `27_vol_confusion_final.png` | 변동성 Round 7 혼합의 테스트 혼동행렬 (비율과 행 수, 최종 Round 8과 예측 99.65% 같음) |
 | `28_vol_transitions.png` | 변동성 전환별 발생 비율과 맞힌 비율(테스트), 의심 상위 잔잔 순간의 격렬 비율(검증) |
+| `29_width_sweep.png` | conv+GRU 층 폭별 시드 0·1 검증 macro-F1 (방향·변동성, Round 8) |
 
 ## 4. 용어
 
@@ -94,6 +96,7 @@
 ```bash
 cd src/report
 python make_tables.py        # report/tables/*.csv (두 과제)
+python plot_width.py         # figures/29 (Round 8, 두 과제)
 cd ../direction
 python plots.py              # figures/01~17
 python plot_full.py          # figures/19

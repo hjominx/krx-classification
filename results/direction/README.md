@@ -13,6 +13,7 @@
 | Round 2: 피처 127개, GBM·딥러닝·결합 | `v2.jsonl`, `v2_deep.jsonl`, `v2_ens.jsonl`, `v2_final.jsonl` | `exp_v2.py`, `deep_v2.py`, `ens_v2.py`, `final_v2.py` |
 | Round 3: 시드 추가, 학습 변형, stacking | `r3_deep.jsonl`, `r3_gbm.jsonl`, `r3_post.jsonl`, `r3_check.jsonl`, `r3_final.jsonl`, `r3_cost.jsonl` | `deep_r3.py`, `gbm_r3.py`, `post_r3.py`, `check_r3.py`, `final_r3.py`, `cost_r3.py` |
 | MLPLOB·TLOB 비교 (중단한 방향) | `lob_models.jsonl`, `lob_cost.jsonl`, `cpu_gpu.jsonl` | `lob_models.py`, `lob_cost.py`, `cpu_gpu.py` |
+| Round 8: conv+GRU 층 폭 | `width_r8.jsonl` | `width_r8.py` |
 
 - Apple GPU로 다시 돌린 MLPLOB·TLOB 비교는 `results_gpu/direction/`에 있음.
 - Round 5·7에서 방향도 함께 시험한 기록(공동 학습 `joint`, 시장 피처 GBM `dir_mkt`)은 그 라운드 코드가 쓰는 `results/volatility/`에 있음.
@@ -24,6 +25,7 @@
 | `v2_deep_<구성>_s<시드>.pt` | Round 2 딥러닝 (conv+GRU, `mt`, `tcn` 등) | `src/common/seq_models.py`의 `make()` |
 | `r3_deep_<구성>_s<시드>.pt` | Round 3 딥러닝 (시드 5~9, `mt_st2` 등) | `src/direction/deep_r3.py`, `final_r3.py` |
 | `r3_gbm_<구성>.pkl` | Round 3 GBM (`lag`, `rec`) | `src/direction/gbm_r3.py`, `final_r3.py` |
+| `r8_deep_mt_c<채널>_h<칸>_s<시드>.pt` | Round 8 conv+GRU `mt`, 폭별 (시드 0·1) | `src/common/seq_models.py`의 `make()` (`cfg`의 `conv`, `hidden`) |
 
 - `.pt`는 `state`(가중치), `mu`·`sd`(학습셋 표준화 값), `cfg`(구성), `cols`(입력 열), `epochs`를 담은 사전임.
 - `.pkl`은 학습된 GBM과 검증셋에서 고른 트리 수(`best_iter`)를 담음.

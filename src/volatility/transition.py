@@ -12,7 +12,7 @@ Forecasts
   r3          : round-3 stacking (TEST only)
   r4          : round-4 blend (TEST only)
   r5          : round-5 blend 0.7 x GBM + 0.3 x conv+GRU, thresholds [2.0, 2.85]
-  r7          : round-7 blend 0.9 x GBM with market features + 0.1 x conv+GRU, thresholds [2.05, 2.85] (final model)
+  r7          : round-7 blend 0.9 x GBM with market features + 0.1 x conv+GRU, thresholds [2.05, 2.85] (final model until round 8)
 Measures
   cells     : rows and share of each (s, y) cell; per cell the share of rows forecast calm / normal / turbulent
   recall    : P(forecast turbulent | y turbulent, s) for s = calm, normal, turbulent
