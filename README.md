@@ -127,6 +127,7 @@ results/
 results_gpu/direction/ Apple GPU(MPS)로 다시 돌린 MLPLOB·TLOB 비교 (run_lob_gpu.py)
 report/                발표 자료, 결과 표(CSV), 결과물 설명
 figures/               발표용 그림
+updates/               날짜별 업데이트 정리 (2026-11-27: Round 8 층 폭 실험)
 DIRECTION.md           방향 예측: 라운드별 결과와 파일 안내
 VOLATILITY.md          변동성 예측: 정답 정의, 라운드별 결과, 체결 비용 시뮬레이션
 RESULTS.md             Round 1 전체 결과 (데이터 수집, 모델 선택, 튜닝, 부록 실험)
